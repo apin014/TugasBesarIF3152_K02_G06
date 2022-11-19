@@ -11,10 +11,10 @@ from PyQt6.QtSql import QSqlDatabase, QSqlQuery
 import sys
 
 
-class MainApp(QWidget):
+class MainMenuCashier(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowIcon(QIcon("./img/cinemanage.png"))
+        self.setWindowIcon(QIcon("../img/cinemanage.png"))
         self.setWindowTitle("CineManage")
         self.setContentsMargins(20, 20, 20, 20)
         screenWidth = 1280
@@ -23,13 +23,15 @@ class MainApp(QWidget):
 
         self.login = None
 
+        # Top Bar
+
         whiteBar = QLabel(self)
-        pixmapWhiteBar = QPixmap('./img/top_white_bar.png')
+        pixmapWhiteBar = QPixmap('../img/top_white_bar.png')
         whiteBar.setPixmap(pixmapWhiteBar)
         whiteBar.move(0, 0)
 
         profile = QLabel(self)
-        pixmapProfile = QPixmap('profile.png')
+        pixmapProfile = QPixmap('../img/profile.png')
         profile.setPixmap(pixmapProfile)
         profile.setStyleSheet("background: #FFFFFF")
         profile.move(30, 20)
@@ -39,8 +41,20 @@ class MainApp(QWidget):
         buttonLogout.clicked.connect(self.logout)
         buttonLogout.move(1120, 30)
 
+        labelLoggedIn = QLabel("You're logged in as", self)
+        labelLoggedIn.setProperty("class", "normal")
+        labelLoggedIn.setStyleSheet("font-weight: 700")
+        labelLoggedIn.move(110, 20)
+
+        buttonUser = QPushButton("Cashier", self)
+        buttonUser.setProperty("class", "button")
+        buttonUser.setStyleSheet("background: #F04D4D")
+        buttonUser.move(110, 45)
+
+        # Middle
+
         cmmain = QLabel(self)
-        pixmapCmmain = QPixmap('cmmain.png')
+        pixmapCmmain = QPixmap('../img/cmmain.png')
         cmmain.setPixmap(pixmapCmmain)
         cmmain.move(470, 140)
 
@@ -65,26 +79,99 @@ class MainApp(QWidget):
         self.login.show()
         self.close()
 
+class MainMenuAdmin(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowIcon(QIcon("../img/cinemanage.png"))
+        self.setWindowTitle("CineManage")
+        self.setContentsMargins(20, 20, 20, 20)
+        screenWidth = 1280
+        screenHeight = 720
+        self.setFixedSize(screenWidth, screenHeight)
+
+        self.login = None
+
+        # Top Bar
+
+        whiteBar = QLabel(self)
+        pixmapWhiteBar = QPixmap('../img/top_white_bar.png')
+        whiteBar.setPixmap(pixmapWhiteBar)
+        whiteBar.move(0, 0)
+
+        profile = QLabel(self)
+        pixmapProfile = QPixmap('../img/profile.png')
+        profile.setPixmap(pixmapProfile)
+        profile.setStyleSheet("background: #FFFFFF")
+        profile.move(30, 20)
+
+        buttonLogout = QPushButton("Logout", self)
+        buttonLogout.setProperty("class", "button")
+        buttonLogout.clicked.connect(self.logout)
+        buttonLogout.move(1120, 30)
+
+        labelLoggedIn = QLabel("You're logged in as", self)
+        labelLoggedIn.setProperty("class", "normal")
+        labelLoggedIn.setStyleSheet("font-weight: 700")
+        labelLoggedIn.move(110, 20)
+
+        buttonUser = QPushButton("Admin", self)
+        buttonUser.setProperty("class", "button")
+        buttonUser.setStyleSheet("background: #F04D4D")
+        buttonUser.move(110, 45)
+
+        # Middle
+
+        cmmain = QLabel(self)
+        pixmapCmmain = QPixmap('../img/cmmain.png')
+        cmmain.setPixmap(pixmapCmmain)
+        cmmain.move(470, 140)
+
+        buttonEditJadwalFilm = QPushButton("Edit Jadwal Film", self)
+        buttonEditJadwalFilm.setProperty("class", "option")
+        # buttonEditJadwalFilm.clicked.connect()
+        buttonEditJadwalFilm.move(430, 280)
+
+        buttonSetPassword = QPushButton("Set Password", self)
+        buttonSetPassword.setProperty("class", "option")
+        # buttonRincianPenayangan.clicked.connect()
+        buttonSetPassword.move(430, 380)
+
+        buttonRiwayatPemesanan = QPushButton("Riwayat Pemesanan", self)
+        buttonRiwayatPemesanan.setProperty("class", "option")
+        # buttonRiwayatPemesanan.clicked.connect()
+        buttonRiwayatPemesanan.move(430, 490)
+
+        buttonEditStudio = QPushButton("Edit Studio", self)
+        buttonEditStudio.setProperty("class", "option")
+        # buttonEditStudio.clicked.connect()
+        buttonEditStudio.move(430, 600)
+
+    def logout(self):
+        time.sleep(1)
+        self.login = LoginWindow()
+        self.login.show()
+        self.close()
+
 
 class LoginWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowIcon(QIcon("cinemanage.png"))
+        self.setWindowIcon(QIcon("../img/cinemanage.png"))
         self.setWindowTitle("CineManage - Login")
         self.setContentsMargins(20, 20, 20, 20)
         screenWidth = 1280
         screenHeight = 720
         self.setFixedSize(screenWidth, screenHeight)
         self.setFocus()
-        self.mainApp = None
+        self.mainMenu = None
 
         logo = QLabel(self)
-        pixmapLogo = QPixmap('./img/cmlogin.png')
+        pixmapLogo = QPixmap('../img/cmlogin.png')
         logo.setPixmap(pixmapLogo)
         logo.move(29, 200)
 
         rect = QLabel(self)
-        pixmapRect = QPixmap('./img/login_background.png')
+        pixmapRect = QPixmap('../img/login_background.png')
         rect.setPixmap(pixmapRect)
         rect.move(870, 173)
 
@@ -128,11 +215,18 @@ class LoginWindow(QWidget):
 
         if query.first():
             if query.value('password') == password:
-                time.sleep(1)
-                self.mainApp = MainApp()
-                self.mainApp.show()
-                self.close()
-                print('LOGIN SUCCESS')
+                if query.value('role') == "Cashier":
+                    time.sleep(1)
+                    self.mainMenu = MainMenuCashier()
+                    self.mainMenu.show()
+                    self.close()
+                    print('LOGIN SUCCESS')
+                elif query.value('role') == "Admin":
+                    time.sleep(1)
+                    self.mainMenu = MainMenuAdmin()
+                    self.mainMenu.show()
+                    self.close()
+                    print('LOGIN SUCCESS')
         else:
             print("PASSWORD NOT FOUND")
 
@@ -222,8 +316,9 @@ if __name__ == '__main__':
         }
 
         ''')
-    loginWindow = LoginWindow()
-    loginWindow.show()
+
+    mainApp = LoginWindow()
+    mainApp.show()
 
     try:
         sys.exit(app.exec())
