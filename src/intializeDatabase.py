@@ -12,7 +12,7 @@ cur.executescript("""
             DROP TABLE IF EXISTS user;
             
             CREATE TABLE studio(
-                StudioID INT NOT NULL PRIMARY KEY,
+                StudioID INT NOT NULL PRIMARY KEY AUTOINCREMENT,
                 Name TEXT NOT NULL UNIQUE,
                 Capacity INTEGER NOT NULL
             );
