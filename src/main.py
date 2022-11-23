@@ -386,7 +386,8 @@ class MenuAddStudio(QWidget):
         inputNamaStudio = QLineEdit(self)
         inputNamaStudio.setFixedSize(600, 38)
         inputNamaStudio.setStyleSheet("background: #F5F5F5; padding-left: 5px; font-size: 16px;")
-        inputNamaStudio.setPlaceholderText("Input Studio Name...")
+        inputNamaStudio.setPlaceholderText("Input Studio Name (30 char max)")
+        inputNamaStudio.setMaxLength(30)
         inputNamaStudio.move(350, 230)
 
         labelKapasitasStudio = QLabel("Studio Capacity *", self)
@@ -425,7 +426,7 @@ class MenuAddStudio(QWidget):
         if (name and capacity):
             query = QSqlQuery()
             query.prepare("INSERT INTO studio (Name, Capacity) VALUES (:name, :capacity)")
-            query.bindValue(':name', name)
+            query.bindValue(':name', name[:30])
             query.bindValue(':capacity', int(capacity))
             query.exec()
 
@@ -490,7 +491,8 @@ class MenuAddFilm(QWidget):
         inputNamaFilm = QLineEdit(self)
         inputNamaFilm.setFixedSize(600, 38)
         inputNamaFilm.setStyleSheet("background: #F5F5F5; padding-left: 5px; font-size: 16px;")
-        inputNamaFilm.setPlaceholderText("Input Film Title...")
+        inputNamaFilm.setPlaceholderText("Input Film Title (30 char max)")
+        inputNamaFilm.setMaxLength(30)
         inputNamaFilm.move(350, 230)
 
         labelDuration = QLabel("Film Duration *", self)
@@ -502,6 +504,7 @@ class MenuAddFilm(QWidget):
         inputDuration.setFixedSize(600, 38)
         inputDuration.setStyleSheet("background: #F5F5F5; padding-left: 5px; font-size: 16px;")
         inputDuration.setPlaceholderText("Insert Film Duration in Minutes")
+        inputDuration.setMaxLength(4)
         inputDuration.move(350, 340)
 
         labelDescription = QLabel("Film Description *", self)
@@ -551,7 +554,7 @@ class MenuAddFilm(QWidget):
         if(title and duration and description and poster):
             query = QSqlQuery()
             query.prepare("INSERT INTO film (Title, Duration, Description, Poster) VALUES (:title, :duration, :description, :poster)")
-            query.bindValue(':title', title)
+            query.bindValue(':title', title[:40])
             query.bindValue(':duration', int(duration))
             query.bindValue(':description', description)
             query.bindValue(':poster', poster)
@@ -662,12 +665,14 @@ class MenuAddSchedule(QWidget):
         inputStartTimeHour.setFixedSize(70, 38)
         inputStartTimeHour.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
         inputStartTimeHour.setPlaceholderText("00")
+        inputStartTimeHour.setMaxLength(2)
         inputStartTimeHour.move(350, 450)
 
         inputStartTimeMinute = QLineEdit(self)
         inputStartTimeMinute.setFixedSize(70, 38)
         inputStartTimeMinute.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
         inputStartTimeMinute.setPlaceholderText("00")
+        inputStartTimeMinute.setMaxLength(2)
         inputStartTimeMinute.move(430, 450)
 
         buttonDuration = QPushButton("Generate End Time", self)
@@ -733,7 +738,7 @@ class MenuAddSchedule(QWidget):
             query.bindValue(':end', str(endHour) + ":" + str(endMinute))
             query.exec()
 
-            self.nextMenu = MenuListFilm(1)
+            self.nextMenu = MenuListSchedule(1)
             self.nextMenu.show()
             self.close()
 
@@ -805,8 +810,9 @@ class MenuEditStudio(QWidget):
         inputNamaStudio = QLineEdit(self)
         inputNamaStudio.setFixedSize(600, 38)
         inputNamaStudio.setStyleSheet("background: #F5F5F5; padding-left: 5px; font-size: 16px;")
-        inputNamaStudio.setPlaceholderText("Input Studio Name...")
+        inputNamaStudio.setPlaceholderText("Input Studio Name (30 char max)")
         inputNamaStudio.setText(studioName)
+        inputNamaStudio.setMaxLength(30)
         inputNamaStudio.move(350, 230)
 
         labelKapasitasStudio = QLabel("Studio Capacity *", self)
@@ -849,7 +855,7 @@ class MenuEditStudio(QWidget):
         if (name and capacity):
             query = QSqlQuery()
             query.prepare("UPDATE studio SET Name = :name, Capacity = :capacity WHERE StudioID = :id")
-            query.bindValue(':name', name)
+            query.bindValue(':name', name[:30])
             query.bindValue(':capacity', int(capacity))
             query.bindValue(':id', studioId)
             query.exec()
@@ -930,8 +936,9 @@ class MenuEditFilm(QWidget):
         inputNamaFilm = QLineEdit(self)
         inputNamaFilm.setFixedSize(600, 38)
         inputNamaFilm.setStyleSheet("background: #F5F5F5; padding-left: 5px; font-size: 16px;")
-        inputNamaFilm.setPlaceholderText("Input Film Title...")
+        inputNamaFilm.setPlaceholderText("Input Film Title (30 char max)")
         inputNamaFilm.setText(filmName)
+        inputNamaFilm.setMaxLength(30)
         inputNamaFilm.move(350, 190)
 
         labelDuration = QLabel("Film Duration *", self)
@@ -944,6 +951,7 @@ class MenuEditFilm(QWidget):
         inputDuration.setStyleSheet("background: #F5F5F5; padding-left: 5px; font-size: 16px;")
         inputDuration.setPlaceholderText("Insert Film Duration in Minutes")
         inputDuration.setText(filmDuration)
+        inputDuration.setMaxLength(4)
         inputDuration.move(350, 300)
 
         labelDescription = QLabel("Film Description *", self)
@@ -995,7 +1003,7 @@ class MenuEditFilm(QWidget):
         if(title and duration and description and poster):
             query = QSqlQuery()
             query.prepare("UPDATE film SET Title = :title, Duration = :duration, Description = :description,  Poster = :poster WHERE FilmID = :filmid")
-            query.bindValue(':title', title)
+            query.bindValue(':title', title[:40])
             query.bindValue(':duration', int(duration))
             query.bindValue(':description', description)
             query.bindValue(':poster', poster)
@@ -1123,14 +1131,16 @@ class MenuEditSchedule(QWidget):
         inputStartTimeHour.setFixedSize(70, 38)
         inputStartTimeHour.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
         inputStartTimeHour.setPlaceholderText("00")
-        inputStartTimeHour.setText(startTime[0] + startTime[1])
+        inputStartTimeHour.setMaxLength(2)
+        inputStartTimeHour.setText(startTime[:2])
         inputStartTimeHour.move(350, 450)
 
         inputStartTimeMinute = QLineEdit(self)
         inputStartTimeMinute.setFixedSize(70, 38)
         inputStartTimeMinute.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
         inputStartTimeMinute.setPlaceholderText("00")
-        inputStartTimeMinute.setText(startTime[3] + startTime[4])
+        inputStartTimeMinute.setMaxLength(2)
+        inputStartTimeMinute.setText(startTime[3:5])
         inputStartTimeMinute.move(430, 450)
 
         buttonDuration = QPushButton("Generate End Time", self)
@@ -1256,13 +1266,13 @@ class MenuListStudio(QWidget):
 
         # Query For Debug
 
-        # db = QSqlDatabase.addDatabase('QSQLITE')
-        # db.setDatabaseName(db_path)
-        #
-        # if not db.open():
-        #     print("CONNECTION FAILED")
-        # else:
-        #     print("CONNECTED TO DB SUCCESSFULLY")
+        db = QSqlDatabase.addDatabase('QSQLITE')
+        db.setDatabaseName(db_path)
+
+        if not db.open():
+            print("CONNECTION FAILED")
+        else:
+            print("CONNECTED TO DB SUCCESSFULLY")
 
         query = QSqlQuery()
         query.prepare("SELECT * FROM STUDIO")
@@ -1317,7 +1327,7 @@ class MenuListStudio(QWidget):
 
         tableHeaderCol3 = QLabel("Capacity", self)
         tableHeaderCol3.setProperty("class", "table-heading")
-        tableHeaderCol3.move(770, 165)
+        tableHeaderCol3.move(780, 165)
 
         tableHeaderCol4 = QLabel("Action", self)
         tableHeaderCol4.setProperty("class", "table-heading")
@@ -1337,6 +1347,7 @@ class MenuListStudio(QWidget):
 
             tableItem1Col2 = QLabel(str(listStudioName[0]), self)
             tableItem1Col2.setProperty("class", "table-item")
+            tableItem1Col2.setStyleSheet("")
             tableItem1Col2.move(275, 225)
 
             tableItem1Col3 = QLabel(str(listKapasitas[0]), self)
@@ -1576,19 +1587,19 @@ class MenuListFilm(QWidget):
 
         labelTitleMenu = QLabel("List Film", self)
         labelTitleMenu.setProperty("class", "heading")
-        labelTitleMenu.move(480, 20)
+        labelTitleMenu.move(510, 20)
 
         # Middle
 
         # Query For Debug
 
-        # db = QSqlDatabase.addDatabase('QSQLITE')
-        # db.setDatabaseName(db_path)
-        #
-        # if not db.open():
-        #     print("CONNECTION FAILED")
-        # else:
-        #     print("CONNECTED TO DB SUCCESSFULLY")
+        db = QSqlDatabase.addDatabase('QSQLITE')
+        db.setDatabaseName(db_path)
+
+        if not db.open():
+            print("CONNECTION FAILED")
+        else:
+            print("CONNECTED TO DB SUCCESSFULLY")
 
         query = QSqlQuery()
         query.prepare("SELECT * FROM film")
@@ -1666,7 +1677,7 @@ class MenuListFilm(QWidget):
 
             tableItem1Col2 = QLabel(str(listFilmTitle[0]), self)
             tableItem1Col2.setProperty("class", "table-item")
-            tableItem1Col2.move(275, 225)
+            tableItem1Col2.move(245, 225)
 
             tableItem1Col3 = QLabel(str(listFilmDuration[0]), self)
             tableItem1Col3.setProperty("class", "table-item")
@@ -1700,7 +1711,7 @@ class MenuListFilm(QWidget):
 
             tableItem2Col2 = QLabel(str(listFilmTitle[1]), self)
             tableItem2Col2.setProperty("class", "table-item")
-            tableItem2Col2.move(275, 285)
+            tableItem2Col2.move(245, 285)
 
             tableItem2Col3 = QLabel(str(listFilmDuration[1]), self)
             tableItem2Col3.setProperty("class", "table-item")
@@ -1734,7 +1745,7 @@ class MenuListFilm(QWidget):
 
             tableItem3Col2 = QLabel(str(listFilmTitle[2]), self)
             tableItem3Col2.setProperty("class", "table-item")
-            tableItem3Col2.move(275, 345)
+            tableItem3Col2.move(245, 345)
 
             tableItem3Col3 = QLabel(str(listFilmDuration[2]), self)
             tableItem3Col3.setProperty("class", "table-item")
@@ -1768,7 +1779,7 @@ class MenuListFilm(QWidget):
 
             tableItem4Col2 = QLabel(str(listFilmTitle[3]), self)
             tableItem4Col2.setProperty("class", "table-item")
-            tableItem4Col2.move(275, 405)
+            tableItem4Col2.move(245, 405)
 
             tableItem4Col3 = QLabel(str(listFilmDuration[3]), self)
             tableItem4Col3.setProperty("class", "table-item")
@@ -1802,7 +1813,7 @@ class MenuListFilm(QWidget):
 
             tableItem5Col2 = QLabel(str(listFilmTitle[4]), self)
             tableItem5Col2.setProperty("class", "table-item")
-            tableItem5Col2.move(275, 465)
+            tableItem5Col2.move(245, 465)
 
             tableItem5Col3 = QLabel(str(listFilmDuration[4]), self)
             tableItem5Col3.setProperty("class", "table-item")
@@ -1950,7 +1961,7 @@ class MenuListSchedule(QWidget):
 
         labelTitleMenu = QLabel("List Schedule", self)
         labelTitleMenu.setProperty("class", "heading")
-        labelTitleMenu.move(480, 20)
+        labelTitleMenu.move(450, 20)
 
         # Middle
 
@@ -2217,6 +2228,12 @@ class MenuListSchedule(QWidget):
             buttonNextPage.setProperty("class", "btn-page")
             buttonNextPage.move(700, 520)
             buttonNextPage.clicked.connect(lambda: self.changePage(self.page + 1))
+
+        buttonFilmMenu = QPushButton("<< List Film", self)
+        buttonFilmMenu.setProperty("class", "option")
+        buttonFilmMenu.setStyleSheet("width: 200px; height: 44px; font-size: 20px;")
+        buttonFilmMenu.move(90, 660)
+        buttonFilmMenu.clicked.connect(lambda: self.toFilm())
 
         buttonScheduleMenu = QPushButton("Main Menu >>", self)
         buttonScheduleMenu.setProperty("class", "option")
@@ -2878,7 +2895,7 @@ if __name__ == '__main__':
         
         ''')
 
-    mainApp = LoginWindow()
+    mainApp = MenuListFilm(1)
     mainApp.show()
 
     try:
