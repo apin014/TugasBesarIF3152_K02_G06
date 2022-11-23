@@ -665,6 +665,7 @@ class MenuAddSchedule(QWidget):
         inputStartTimeHour.setFixedSize(70, 38)
         inputStartTimeHour.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
         inputStartTimeHour.setPlaceholderText("00")
+        inputStartTimeHour.setText("00")
         inputStartTimeHour.setMaxLength(2)
         inputStartTimeHour.move(350, 450)
 
@@ -672,6 +673,7 @@ class MenuAddSchedule(QWidget):
         inputStartTimeMinute.setFixedSize(70, 38)
         inputStartTimeMinute.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
         inputStartTimeMinute.setPlaceholderText("00")
+        inputStartTimeMinute.setText("00")
         inputStartTimeMinute.setMaxLength(2)
         inputStartTimeMinute.move(430, 450)
 
@@ -725,8 +727,8 @@ class MenuAddSchedule(QWidget):
         start = datetime.datetime(1,1,1,int(startHour) % 24,int(startMinute) % 60,0)
         end = start + datetime.timedelta(minutes=duration)
         print(str(end.time()))
-        endHour.setText(str(end.hour))
-        endMinute.setText(str(end.minute))
+        endHour.setText(str(end.time())[:2])
+        endMinute.setText(str(end.time())[3:5])
 
     def submitAddSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute):
         if (studioId and filmTitle and startHour and startMinute and endHour and endMinute):
@@ -1196,8 +1198,8 @@ class MenuEditSchedule(QWidget):
         start = datetime.datetime(1, 1, 1, int(startHour) % 24, int(startMinute) % 60, 0)
         end = start + datetime.timedelta(minutes=duration)
         print(str(end.time()))
-        endHour.setText(str(end.hour))
-        endMinute.setText(str(end.minute))
+        endHour.setText(str(end.time())[:2])
+        endMinute.setText(str(end.time())[3:5])
 
     def submitEditSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute, scheduleId):
         if (studioId and filmTitle and startHour and startMinute and endHour and endMinute):
@@ -2221,7 +2223,7 @@ class MenuListSchedule(QWidget):
             buttonPrevPage.clicked.connect(lambda: self.changePage(self.page - 1))
 
         buttonNextPage = QPushButton("Next Page >>", self)
-        if (countRecords < (self.page * 5)):
+        if (countRecords < (self.page * 5 + 1)):
             buttonNextPage.setProperty("class", "btn-disabled")
             buttonNextPage.move(700, 520)
         else:
@@ -2253,10 +2255,9 @@ class MenuListSchedule(QWidget):
         self.close()
 
     def editSchedule(self, scheduleId):
-        print('a')
-        # self.nextMenu = MenuEditSchedule(scheduleId)
-        # self.nextMenu.show()
-        # self.close()
+        self.nextMenu = MenuEditSchedule(scheduleId)
+        self.nextMenu.show()
+        self.close()
 
     def delSchedule(self, scheduleId):
         query = QSqlQuery()
