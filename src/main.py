@@ -140,10 +140,10 @@ class MainMenuAdmin(QWidget):
         buttonSetPassword.clicked.connect(self.setPassword)
         buttonSetPassword.move(430, 390)
 
-        buttonRiwayatPemesanan = QPushButton("Order History", self)
-        buttonRiwayatPemesanan.setProperty("class", "option")
-        # buttonRiwayatPemesanan.clicked.connect()
-        buttonRiwayatPemesanan.move(430, 500)
+        buttonOrderHistory = QPushButton("Order History", self)
+        buttonOrderHistory.setProperty("class", "option")
+        buttonOrderHistory.clicked.connect(self.orderHistory)
+        buttonOrderHistory.move(430, 500)
 
         buttonEditStudio = QPushButton("Edit Studio", self)
         buttonEditStudio.setProperty("class", "option")
@@ -176,6 +176,11 @@ class MainMenuAdmin(QWidget):
 
     def editFilmAndSchedule(self):
         self.nextMenu = MenuListFilm(1)
+        self.nextMenu.show()
+        self.close()
+
+    def orderHistory(self):
+        self.nextMenu = MenuListTicket(1)
         self.nextMenu.show()
         self.close()
 
@@ -605,13 +610,13 @@ class MenuAddSchedule(QWidget):
         # Middle
 
         # Query Debug
-        db = QSqlDatabase.addDatabase('QSQLITE')
-        db.setDatabaseName(db_path)
-
-        if not db.open():
-            print("CONNECTION FAILED")
-        else:
-            print("CONNECTED TO DB SUCCESSFULLY")
+        # db = QSqlDatabase.addDatabase('QSQLITE')
+        # db.setDatabaseName(db_path)
+        #
+        # if not db.open():
+        #     print("CONNECTION FAILED")
+        # else:
+        #     print("CONNECTED TO DB SUCCESSFULLY")
 
         query = QSqlQuery()
         query.prepare("SELECT * FROM film WHERE FilmID = :id")
@@ -1004,6 +1009,205 @@ class MenuEditFilm(QWidget):
         else:
             print("Error required input not filled")
 
+class MenuEditSchedule(QWidget):
+    def __init__(self, scheduleId):
+        super().__init__()
+        self.setWindowIcon(QIcon("../img/cinemanage.png"))
+        self.setWindowTitle("CineManage - Edit Schedule")
+        self.setContentsMargins(20, 20, 20, 20)
+        screenWidth = 1280
+        screenHeight = 720
+        self.setFixedSize(screenWidth, screenHeight)
+        self.nextMenu = None
+
+        # Top Bar
+
+        whiteBar = QLabel(self)
+        pixmapWhiteBar = QPixmap('../img/top_white_bar.png')
+        whiteBar.setPixmap(pixmapWhiteBar)
+        whiteBar.move(0, 0)
+
+        profile = QLabel(self)
+        pixmapProfile = QPixmap('../img/profile.png')
+        profile.setPixmap(pixmapProfile)
+        profile.setStyleSheet("background: #FFFFFF")
+        profile.move(30, 20)
+
+        buttonLogout = QPushButton("Logout", self)
+        buttonLogout.setProperty("class", "button")
+        buttonLogout.clicked.connect(self.logout)
+        buttonLogout.move(1120, 30)
+
+        labelLoggedIn = QLabel("You're logged in as", self)
+        labelLoggedIn.setProperty("class", "normal")
+        labelLoggedIn.setStyleSheet("font-weight: 700")
+        labelLoggedIn.move(110, 20)
+
+        buttonUser = QPushButton("Admin", self)
+        buttonUser.setProperty("class", "btn-danger")
+        buttonUser.setStyleSheet("background: #F04D4D; width: 180px; height: 35px;")
+        buttonUser.move(110, 47)
+
+        labelTitleMenu = QLabel("Edit Schedule", self)
+        labelTitleMenu.setProperty("class", "heading")
+        labelTitleMenu.move(450, 20)
+
+        # Middle
+
+        # Query Debug
+        # db = QSqlDatabase.addDatabase('QSQLITE')
+        # db.setDatabaseName(db_path)
+        #
+        # if not db.open():
+        #     print("CONNECTION FAILED")
+        # else:
+        #     print("CONNECTED TO DB SUCCESSFULLY")
+
+        query = QSqlQuery()
+        query.prepare("SELECT * FROM screening WHERE ScreeningID = :id")
+        query.bindValue(':id', scheduleId)
+        query.exec()
+
+        studioId = ""
+        filmName = ""
+        startTime = ""
+
+        if query.first():
+            studioId = query.value(1)
+            filmName = query.value(2)
+            startTime = query.value(3)
+
+        print(studioId, filmName, startTime)
+
+        query = QSqlQuery()
+        query.prepare("SELECT * FROM film WHERE Title LIKE :title")
+        query.bindValue(':title', filmName)
+        query.exec()
+
+        filmDuration = 0
+
+        if query.first():
+            filmDuration = int(query.value(2))
+
+        labelStudioId = QLabel("Studio ID *", self)
+        labelStudioId.setProperty("class", "normal")
+        labelStudioId.setStyleSheet("font-weight: 700; background: #FFDE59;")
+        labelStudioId.move(350, 190)
+
+        inputStudioId = QLineEdit(self)
+        inputStudioId.setFixedSize(600, 38)
+        inputStudioId.setStyleSheet("background: #F5F5F5; padding-left: 5px; font-size: 16px;")
+        inputStudioId.setPlaceholderText("Input Studio ID...")
+        inputStudioId.setText(str(studioId))
+        inputStudioId.move(350, 230)
+
+        labelNamaFilm = QLabel("Film Title *", self)
+        labelNamaFilm.setProperty("class", "normal")
+        labelNamaFilm.setStyleSheet("font-weight: 700; background: #FFDE59;")
+        labelNamaFilm.move(350, 300)
+
+        inputNamaFilm = QLineEdit(self)
+        inputNamaFilm.setFixedSize(600, 38)
+        inputNamaFilm.setStyleSheet("background: #F5F5F5; padding-left: 5px; font-size: 16px;")
+        inputNamaFilm.setPlaceholderText("Input Film Title...")
+        inputNamaFilm.setText(filmName)
+        inputNamaFilm.setReadOnly(True)
+        inputNamaFilm.move(350, 340)
+
+        labelStartTime = QLabel("Start Time (XX:XX) *", self)
+        labelStartTime.setProperty("class", "normal")
+        labelStartTime.setStyleSheet("font-weight: 700; background: #FFDE59;")
+        labelStartTime.move(350, 410)
+
+        inputStartTimeHour = QLineEdit(self)
+        inputStartTimeHour.setFixedSize(70, 38)
+        inputStartTimeHour.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
+        inputStartTimeHour.setPlaceholderText("00")
+        inputStartTimeHour.setText(startTime[0] + startTime[1])
+        inputStartTimeHour.move(350, 450)
+
+        inputStartTimeMinute = QLineEdit(self)
+        inputStartTimeMinute.setFixedSize(70, 38)
+        inputStartTimeMinute.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
+        inputStartTimeMinute.setPlaceholderText("00")
+        inputStartTimeMinute.setText(startTime[3] + startTime[4])
+        inputStartTimeMinute.move(430, 450)
+
+        buttonDuration = QPushButton("Generate End Time", self)
+        buttonDuration.setProperty("class", "button")
+        buttonDuration.setStyleSheet("width: 180px; height:30px; font-size:16px;")
+        buttonDuration.move(565, 455)
+        buttonDuration.clicked.connect(
+            lambda: self.generateEndTime(inputStartTimeHour.text(), inputStartTimeMinute.text(), filmDuration,
+                                         inputEndTimeHour, inputEndTimeMinute))
+
+        labelEndTime = QLabel("End Time (XX:XX) *", self)
+        labelEndTime.setProperty("class", "normal")
+        labelEndTime.setStyleSheet("font-weight: 700; background: #FFDE59;")
+        labelEndTime.move(770, 410)
+
+        inputEndTimeHour = QLineEdit(self)
+        inputEndTimeHour.setFixedSize(70, 38)
+        inputEndTimeHour.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
+        inputEndTimeHour.move(800, 450)
+        inputEndTimeHour.setReadOnly(True)
+
+        inputEndTimeMinute = QLineEdit(self)
+        inputEndTimeMinute.setFixedSize(70, 38)
+        inputEndTimeMinute.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
+        inputEndTimeMinute.move(880, 450)
+        inputEndTimeMinute.setReadOnly(True)
+
+        buttonBatal = QPushButton("Batal", self)
+        buttonBatal.setProperty("class", "btn-danger")
+        buttonBatal.clicked.connect(lambda: self.returnToListSchedule())
+        buttonBatal.move(505, 620)
+
+        buttonSimpan = QPushButton("Simpan", self)
+        buttonSimpan.setProperty("class", "btn-success")
+        buttonSimpan.clicked.connect(
+            lambda: self.submitEditSchedule(inputStudioId.text(), inputNamaFilm.text(), inputStartTimeHour.text(),
+                                           inputStartTimeMinute.text(), inputEndTimeHour.text(),
+                                           inputEndTimeMinute.text(), scheduleId))
+        buttonSimpan.move(675, 620)
+
+    def logout(self):
+        time.sleep(1)
+        self.nextMenu = LoginWindow()
+        self.nextMenu.show()
+        self.close()
+
+    def returnToListSchedule(self):
+        self.nextMenu = MenuListSchedule(1)
+        self.nextMenu.show()
+        self.close()
+
+    def generateEndTime(self, startHour, startMinute, duration, endHour, endMinute):
+        start = datetime.datetime(1, 1, 1, int(startHour) % 24, int(startMinute) % 60, 0)
+        end = start + datetime.timedelta(minutes=duration)
+        print(str(end.time()))
+        endHour.setText(str(end.hour))
+        endMinute.setText(str(end.minute))
+
+    def submitEditSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute, scheduleId):
+        if (studioId and filmTitle and startHour and startMinute and endHour and endMinute):
+            query = QSqlQuery()
+            query.prepare(
+                "UPDATE screening SET StudioID = :studio, FilmTitle = :title, StartTime = :start, EndTime = :end WHERE ScreeningId = :id")
+            query.bindValue(':studio', studioId)
+            query.bindValue(':title', filmTitle)
+            query.bindValue(':start', str(startHour) + ":" + str(startMinute))
+            query.bindValue(':end', str(endHour) + ":" + str(endMinute))
+            query.bindValue(':id', scheduleId)
+            query.exec()
+
+            self.nextMenu = MenuListSchedule(1)
+            self.nextMenu.show()
+            self.close()
+
+        else:
+            print("Error required input not filled")
+
 class MenuListStudio(QWidget):
     def __init__(self, page):
         super().__init__()
@@ -1052,13 +1256,13 @@ class MenuListStudio(QWidget):
 
         # Query For Debug
 
-        db = QSqlDatabase.addDatabase('QSQLITE')
-        db.setDatabaseName(db_path)
-
-        if not db.open():
-            print("CONNECTION FAILED")
-        else:
-            print("CONNECTED TO DB SUCCESSFULLY")
+        # db = QSqlDatabase.addDatabase('QSQLITE')
+        # db.setDatabaseName(db_path)
+        #
+        # if not db.open():
+        #     print("CONNECTION FAILED")
+        # else:
+        #     print("CONNECTED TO DB SUCCESSFULLY")
 
         query = QSqlQuery()
         query.prepare("SELECT * FROM STUDIO")
@@ -1378,13 +1582,13 @@ class MenuListFilm(QWidget):
 
         # Query For Debug
 
-        db = QSqlDatabase.addDatabase('QSQLITE')
-        db.setDatabaseName(db_path)
-
-        if not db.open():
-            print("CONNECTION FAILED")
-        else:
-            print("CONNECTED TO DB SUCCESSFULLY")
+        # db = QSqlDatabase.addDatabase('QSQLITE')
+        # db.setDatabaseName(db_path)
+        #
+        # if not db.open():
+        #     print("CONNECTION FAILED")
+        # else:
+        #     print("CONNECTED TO DB SUCCESSFULLY")
 
         query = QSqlQuery()
         query.prepare("SELECT * FROM film")
@@ -1752,13 +1956,13 @@ class MenuListSchedule(QWidget):
 
         # Query For Debug
 
-        db = QSqlDatabase.addDatabase('QSQLITE')
-        db.setDatabaseName(db_path)
-
-        if not db.open():
-            print("CONNECTION FAILED")
-        else:
-            print("CONNECTED TO DB SUCCESSFULLY")
+        # db = QSqlDatabase.addDatabase('QSQLITE')
+        # db.setDatabaseName(db_path)
+        #
+        # if not db.open():
+        #     print("CONNECTION FAILED")
+        # else:
+        #     print("CONNECTED TO DB SUCCESSFULLY")
 
         query = QSqlQuery()
         query.prepare("SELECT * FROM screening")
@@ -2014,17 +2218,11 @@ class MenuListSchedule(QWidget):
             buttonNextPage.move(700, 520)
             buttonNextPage.clicked.connect(lambda: self.changePage(self.page + 1))
 
-        buttonReturn = QPushButton("<< Main Menu", self)
-        buttonReturn.setProperty("class", "option")
-        buttonReturn.setStyleSheet("width: 200px; height: 44px; font-size: 20px;")
-        buttonReturn.move(90, 660)
-        buttonReturn.clicked.connect(lambda: self.returnToMainMenu())
-
-        buttonScheduleMenu = QPushButton("Film List >>", self)
+        buttonScheduleMenu = QPushButton("Main Menu >>", self)
         buttonScheduleMenu.setProperty("class", "option")
         buttonScheduleMenu.setStyleSheet("width: 200px; height: 44px; font-size: 20px;")
         buttonScheduleMenu.move(980, 660)
-        buttonScheduleMenu.clicked.connect(lambda: self.toFilm())
+        buttonScheduleMenu.clicked.connect(lambda: self.returnToMainMenu())
 
     def logout(self):
         time.sleep(1)
@@ -2061,6 +2259,315 @@ class MenuListSchedule(QWidget):
 
     def toFilm(self):
         self.nextMenu = MenuListFilm(1)
+        self.nextMenu.show()
+        self.close()
+
+class MenuListTicket(QWidget):
+    def __init__(self, page):
+        super().__init__()
+        self.setWindowIcon(QIcon("../img/cinemanage.png"))
+        self.setWindowTitle("CineManage - List Ticket")
+        self.setContentsMargins(20, 20, 20, 20)
+        screenWidth = 1280
+        screenHeight = 720
+        self.setFixedSize(screenWidth, screenHeight)
+        self.nextMenu = None
+        self.page = page
+
+        # Top Bar
+        whiteBar = QLabel(self)
+        pixmapWhiteBar = QPixmap('../img/top_white_bar.png')
+        whiteBar.setPixmap(pixmapWhiteBar)
+        whiteBar.move(0, 0)
+
+        profile = QLabel(self)
+        pixmapProfile = QPixmap('../img/profile.png')
+        profile.setPixmap(pixmapProfile)
+        profile.setStyleSheet("background: #FFFFFF")
+        profile.move(30, 20)
+
+        buttonLogout = QPushButton("Logout", self)
+        buttonLogout.setProperty("class", "button")
+        buttonLogout.clicked.connect(self.logout)
+        buttonLogout.move(1120, 30)
+
+        labelLoggedIn = QLabel("You're logged in as", self)
+        labelLoggedIn.setProperty("class", "normal")
+        labelLoggedIn.setStyleSheet("font-weight: 700")
+        labelLoggedIn.move(110, 20)
+
+        buttonUser = QPushButton("Admin", self)
+        buttonUser.setProperty("class", "btn-danger")
+        buttonUser.setStyleSheet("background: #F04D4D; width: 180px; height: 35px;")
+        buttonUser.move(110, 47)
+
+        labelTitleMenu = QLabel("List Ticket", self)
+        labelTitleMenu.setProperty("class", "heading")
+        labelTitleMenu.move(480, 20)
+
+        # Middle
+
+        # Query For Debug
+
+        # db = QSqlDatabase.addDatabase('QSQLITE')
+        # db.setDatabaseName(db_path)
+        #
+        # if not db.open():
+        #     print("CONNECTION FAILED")
+        # else:
+        #     print("CONNECTED TO DB SUCCESSFULLY")
+
+        query = QSqlQuery()
+        query.prepare("SELECT * FROM ticket")
+        query.exec()
+
+        countRecords = 0
+
+        if query.first():
+            countRecords += 1
+            while query.next():
+                countRecords += 1
+
+        query.finish()
+
+        limit = 5
+        offset = (self.page - 1) * limit
+        pages = math.ceil(countRecords / limit)
+
+        query = QSqlQuery()
+        query.prepare("SELECT * FROM ticket ORDER BY ScreeningID DESC LIMIT 5  OFFSET :offset")
+        query.bindValue(':offset', offset)
+        query.exec()
+
+        listSeatID = []
+        listStudioID = []
+        listScreeningID = []
+        listOrderDate = []
+
+        if query.first():
+            listSeatID.append(query.value(0))
+            listStudioID.append(query.value(1))
+            listScreeningID.append(query.value(2))
+            listOrderDate.append(query.value(3))
+            while query.next():
+                listSeatID.append(query.value(0))
+                listStudioID.append(query.value(1))
+                listScreeningID.append(query.value(2))
+                listOrderDate.append(query.value(3))
+
+        query.finish()
+
+        # Table Heading
+
+        tableHeader = QPushButton("", self)
+        tableHeader.setProperty("class", "table-heading")
+        tableHeader.move(90, 150)
+
+        tableHeaderCol1 = QLabel("ID Seat", self)
+        tableHeaderCol1.setProperty("class", "table-heading")
+        tableHeaderCol1.move(110, 165)
+
+        tableHeaderCol2 = QLabel("ID Studio", self)
+        tableHeaderCol2.setProperty("class", "table-heading")
+        tableHeaderCol2.move(220, 165)
+
+        tableHeaderCol3 = QLabel("ID Schedule", self)
+        tableHeaderCol3.setProperty("class", "table-heading")
+        tableHeaderCol3.move(350, 165)
+
+        tableHeaderCol4 = QLabel("Order Date", self)
+        tableHeaderCol4.setProperty("class", "table-heading")
+        tableHeaderCol4.move(660, 165)
+
+        tableHeaderCol5 = QLabel("Action", self)
+        tableHeaderCol5.setProperty("class", "table-heading")
+        tableHeaderCol5.move(1040, 165)
+
+        # ITEM 1
+
+        tableItem1 = QPushButton("", self)
+        tableItem1.setProperty("class", "table-item")
+        tableItem1.move(90, 210)
+
+        if len(listScreeningID) > 0:
+            tableItem1Col1 = QLabel(str(listSeatID[0]), self)
+            tableItem1Col1.setProperty("class", "table-item")
+            tableItem1Col1.move(120, 225)
+
+            tableItem1Col2 = QLabel(str(listStudioID[0]), self)
+            tableItem1Col2.setProperty("class", "table-item")
+            tableItem1Col2.move(260, 225)
+
+            tableItem1Col3 = QLabel(str(listScreeningID[0]), self)
+            tableItem1Col3.setProperty("class", "table-item")
+            tableItem1Col3.move(400, 225)
+
+            tableItem1Col4 = QLabel((str(listOrderDate[0])), self)
+            tableItem1Col4.setProperty("class", "table-item")
+            tableItem1Col4.move(600, 225)
+
+            tableItem1Col5 = QPushButton("Delete", self)
+            tableItem1Col5.setProperty("class", "btn-del")
+            tableItem1Col5.move(1020, 218)
+            tableItem1Col5.clicked.connect(lambda: self.delTicket(listOrderDate[0]))
+
+        # ITEM 2
+
+        tableItem2 = QPushButton("", self)
+        tableItem2.setProperty("class", "table-item")
+        tableItem2.move(90, 270)
+
+        if len(listScreeningID) > 1:
+            tableItem2Col1 = QLabel(str(listSeatID[1]), self)
+            tableItem2Col1.setProperty("class", "table-item")
+            tableItem2Col1.move(120, 285)
+
+            tableItem2Col2 = QLabel(str(listStudioID[1]), self)
+            tableItem2Col2.setProperty("class", "table-item")
+            tableItem2Col2.move(260, 285)
+
+            tableItem2Col3 = QLabel(str(listScreeningID[1]), self)
+            tableItem2Col3.setProperty("class", "table-item")
+            tableItem2Col3.move(400, 285)
+
+            tableItem2Col4 = QLabel((str(listOrderDate[1])), self)
+            tableItem2Col4.setProperty("class", "table-item")
+            tableItem2Col4.move(600, 285)
+
+            tableItem2Col5 = QPushButton("Delete", self)
+            tableItem2Col5.setProperty("class", "btn-del")
+            tableItem2Col5.move(1020, 278)
+            tableItem2Col5.clicked.connect(lambda: self.delTicket(listOrderDate[1]))
+
+        # ITEM 3
+
+        tableItem3 = QPushButton("", self)
+        tableItem3.setProperty("class", "table-item")
+        tableItem3.move(90, 330)
+
+        if len(listScreeningID) > 2:
+            tableItem3Col1 = QLabel(str(listSeatID[2]), self)
+            tableItem3Col1.setProperty("class", "table-item")
+            tableItem3Col1.move(120, 345)
+
+            tableItem3Col2 = QLabel(str(listStudioID[2]), self)
+            tableItem3Col2.setProperty("class", "table-item")
+            tableItem3Col2.move(260, 345)
+
+            tableItem3Col3 = QLabel(str(listScreeningID[2]), self)
+            tableItem3Col3.setProperty("class", "table-item")
+            tableItem3Col3.move(400, 345)
+
+            tableItem3Col4 = QLabel((str(listOrderDate[2])), self)
+            tableItem3Col4.setProperty("class", "table-item")
+            tableItem3Col4.move(600, 345)
+
+            tableItem3Col5 = QPushButton("Delete", self)
+            tableItem3Col5.setProperty("class", "btn-del")
+            tableItem3Col5.move(1020, 338)
+            tableItem3Col5.clicked.connect(lambda: self.delTicket(listOrderDate[2]))
+
+        # ITEM 4
+
+        tableItem4 = QPushButton("", self)
+        tableItem4.setProperty("class", "table-item")
+        tableItem4.move(90, 390)
+
+        if len(listScreeningID) > 3:
+            tableItem4Col1 = QLabel(str(listSeatID[3]), self)
+            tableItem4Col1.setProperty("class", "table-item")
+            tableItem4Col1.move(120, 405)
+
+            tableItem4Col2 = QLabel(str(listStudioID[3]), self)
+            tableItem4Col2.setProperty("class", "table-item")
+            tableItem4Col2.move(260, 405)
+
+            tableItem4Col3 = QLabel(str(listScreeningID[3]), self)
+            tableItem4Col3.setProperty("class", "table-item")
+            tableItem4Col3.move(400, 405)
+
+            tableItem4Col4 = QLabel((str(listOrderDate[3])), self)
+            tableItem4Col4.setProperty("class", "table-item")
+            tableItem4Col4.move(600, 405)
+
+            tableItem4Col5 = QPushButton("Delete", self)
+            tableItem4Col5.setProperty("class", "btn-del")
+            tableItem4Col5.move(1020, 398)
+            tableItem4Col5.clicked.connect(lambda: self.delTicket(listOrderDate[3]))
+
+        # ITEM 5
+
+        tableItem5 = QPushButton("", self)
+        tableItem5.setProperty("class", "table-item")
+        tableItem5.move(90, 450)
+
+        if len(listScreeningID) > 4:
+            tableItem5Col1 = QLabel(str(listSeatID[4]), self)
+            tableItem5Col1.setProperty("class", "table-item")
+            tableItem5Col1.move(120, 465)
+
+            tableItem5Col2 = QLabel(str(listStudioID[4]), self)
+            tableItem5Col2.setProperty("class", "table-item")
+            tableItem5Col2.move(260, 465)
+
+            tableItem5Col3 = QLabel(str(listScreeningID[4]), self)
+            tableItem5Col3.setProperty("class", "table-item")
+            tableItem5Col3.move(400, 465)
+
+            tableItem5Col4 = QLabel((str(listOrderDate[4])), self)
+            tableItem5Col4.setProperty("class", "table-item")
+            tableItem5Col4.move(600, 465)
+
+            tableItem5Col5 = QPushButton("Delete", self)
+            tableItem5Col5.setProperty("class", "btn-del")
+            tableItem5Col5.move(1020, 458)
+            tableItem5Col5.clicked.connect(lambda: self.delTicket(listOrderDate[4]))
+
+        # Pagination
+
+        buttonPrevPage = QPushButton("<< Prev Page", self)
+        if (self.page == 1):
+            buttonPrevPage.setProperty("class", "btn-disabled")
+            buttonPrevPage.move(400, 520)
+        else:
+            buttonPrevPage.setProperty("class", "btn-page")
+            buttonPrevPage.clicked.connect(lambda: self.changePage(self.page - 1))
+            buttonPrevPage.move(400, 520)
+
+        buttonNextPage = QPushButton("Next Page >>", self)
+        if (countRecords < (self.page * 5)):
+            buttonNextPage.setProperty("class", "btn-disabled")
+            buttonNextPage.move(700, 520)
+        else:
+            buttonNextPage.setProperty("class", "btn-page")
+            buttonNextPage.move(700, 520)
+            buttonNextPage.clicked.connect(lambda: self.changePage(self.page + 1))
+
+        buttonReturn = QPushButton("<< Main Menu", self)
+        buttonReturn.setProperty("class", "option")
+        buttonReturn.setStyleSheet("width: 200px; height: 44px; font-size: 20px;")
+        buttonReturn.move(90, 660)
+        buttonReturn.clicked.connect(lambda: self.returnToMainMenu())
+
+    def logout(self):
+        time.sleep(1)
+        self.nextMenu = LoginWindow()
+        self.nextMenu.show()
+        self.close()
+
+    def delTicket(self, orderTime):
+        query = QSqlQuery()
+        query.prepare("DELETE FROM ticket WHERE OrderDateTime LIKE :order")
+        query.bindValue(':order', orderTime)
+        query.exec()
+        query.finish()
+
+        self.nextMenu = MenuListTicket(self.page)
+        self.nextMenu.show()
+        self.close()
+
+    def returnToMainMenu(self):
+        self.nextMenu = MainMenuAdmin()
         self.nextMenu.show()
         self.close()
 
@@ -2371,7 +2878,7 @@ if __name__ == '__main__':
         
         ''')
 
-    mainApp = MenuListSchedule(1)
+    mainApp = LoginWindow()
     mainApp.show()
 
     try:
