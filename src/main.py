@@ -743,22 +743,54 @@ class MenuAddSchedule(QWidget):
         endMinute.setText(str(end.time())[3:5])
 
     def submitAddSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute, date):
-        if (studioId and filmTitle and startHour and startMinute and endHour and endMinute and date):
-            query = QSqlQuery()
-            query.prepare("INSERT INTO screening (StudioID, FilmTitle, StartTime, EndTime, Date) VALUES (:studio, :title, :start, :end, :date)")
-            query.bindValue(':studio', studioId)
-            query.bindValue(':title', filmTitle)
-            query.bindValue(':start', str(startHour) + ":" + str(startMinute))
-            query.bindValue(':end', str(endHour) + ":" + str(endMinute))
-            query.bindValue(':date', date)
-            query.exec()
 
-            self.nextMenu = MenuListSchedule(1)
-            self.nextMenu.show()
-            self.close()
+        query = QSqlQuery()
+        query.prepare("SELECT * FROM screening WHERE studioId = :id AND Date LIKE :date")
+        query.bindValue(':id', studioId)
+        query.bindValue(':date', date)
+        query.exec()
+
+        listStartTime = []
+        listEndTime = []
+        if query.first():
+            listStartTime.append(query.value(3))
+            listEndTime.append(query.value(4))
+            while query.next():
+                listStartTime.append(query.value(3))
+                listEndTime.append(query.value(4))
+
+        query.finish()
+
+
+
+        if len(listStartTime) > 4:
+            print("This Studio has reached max screening for this date")
 
         else:
-            print("Error required input not filled")
+            badSchedule = False
+            for i in range(len(listStartTime)):
+                if (((int(startHour) * 60 + int(startMinute)) >= int(str(listStartTime[i])[:2]) * 60 + int(str(listStartTime[i])[3:5])) and ((int(startHour) * 60 + int(startMinute) )< int(str(listEndTime[i])[:2]) * 60 + int(str(listEndTime[i])[3:5]))):
+                    badSchedule = True
+
+            if (badSchedule == False):
+                if (studioId and filmTitle and startHour and startMinute and endHour and endMinute and date):
+                    query = QSqlQuery()
+                    query.prepare("INSERT INTO screening (StudioID, FilmTitle, StartTime, EndTime, Date) VALUES (:studio, :title, :start, :end, :date)")
+                    query.bindValue(':studio', studioId)
+                    query.bindValue(':title', filmTitle)
+                    query.bindValue(':start', str(startHour) + ":" + str(startMinute))
+                    query.bindValue(':end', str(endHour) + ":" + str(endMinute))
+                    query.bindValue(':date', date)
+                    query.exec()
+
+                    self.nextMenu = MenuListSchedule(1)
+                    self.nextMenu.show()
+                    self.close()
+
+                else:
+                    print("Error required input not filled")
+            else:
+                print('This Schedule clashes with existing schedule for this studio')
 
 class MenuEditStudio(QWidget):
     def __init__(self, studioId):
@@ -1203,7 +1235,7 @@ class MenuEditSchedule(QWidget):
 
         buttonSimpan = QPushButton("Simpan", self)
         buttonSimpan.setProperty("class", "btn-success")
-        buttonSimpan.clicked.connect(lambda: self.submitAddSchedule(inputStudioId.text(), inputNamaFilm.text(), inputStartTimeHour.text(), inputStartTimeMinute.text(), inputEndTimeHour.text(), inputEndTimeMinute.text(), inputTanggal.text()))
+        buttonSimpan.clicked.connect(lambda: self.submitAddSchedule(inputStudioId.text(), inputNamaFilm.text(), inputStartTimeHour.text(), inputStartTimeMinute.text(), inputEndTimeHour.text(), inputEndTimeMinute.text(), inputTanggal.text(), scheduleId))
         buttonSimpan.move(675, 620)
 
     def logout(self):
@@ -1224,24 +1256,58 @@ class MenuEditSchedule(QWidget):
         endHour.setText(str(end.time())[:2])
         endMinute.setText(str(end.time())[3:5])
 
-    def submitAddSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute, date):
-        if (studioId and filmTitle and startHour and startMinute and endHour and endMinute and date):
-            query = QSqlQuery()
-            query.prepare(
-                "INSERT INTO screening (StudioID, FilmTitle, StartTime, EndTime, Date) VALUES (:studio, :title, :start, :end, :date)")
-            query.bindValue(':studio', studioId)
-            query.bindValue(':title', filmTitle)
-            query.bindValue(':start', str(startHour) + ":" + str(startMinute))
-            query.bindValue(':end', str(endHour) + ":" + str(endMinute))
-            query.bindValue(':date', date)
-            query.exec()
+    def submitAddSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute, date, scheduleId):
 
-            self.nextMenu = MenuListSchedule(1)
-            self.nextMenu.show()
-            self.close()
+        query = QSqlQuery()
+        query.prepare("SELECT * FROM screening WHERE studioId = :id AND Date LIKE :date")
+        query.bindValue(':id', studioId)
+        query.bindValue(':date', date)
+        query.exec()
+
+        listStartTime = []
+        listEndTime = []
+        if query.first():
+            listStartTime.append(query.value(3))
+            listEndTime.append(query.value(4))
+            while query.next():
+                listStartTime.append(query.value(3))
+                listEndTime.append(query.value(4))
+
+        query.finish()
+
+        if len(listStartTime) > 4:
+            print("This Studio has reached max screening for this date")
 
         else:
-            print("Error required input not filled")
+            badSchedule = False
+            for i in range(len(listStartTime)):
+                if (((int(startHour) * 60 + int(startMinute)) >= int(str(listStartTime[i])[:2]) * 60 + int(
+                        str(listStartTime[i])[3:5])) and (
+                        (int(startHour) * 60 + int(startMinute)) < int(str(listEndTime[i])[:2]) * 60 + int(
+                        str(listEndTime[i])[3:5]))):
+                    badSchedule = True
+
+            if (badSchedule == False):
+                if (studioId and filmTitle and startHour and startMinute and endHour and endMinute and date):
+                    query = QSqlQuery()
+                    query.prepare(
+                        "UPDATE screening SET StudioID = :studio, FilmTitle = :title, StartTime = :start, EndTime = :end, Date = :date WHERE ScreeningID = :id) VALUES (:studio, :title, :start, :end, :date)")
+                    query.bindValue(':studio', studioId)
+                    query.bindValue(':title', filmTitle)
+                    query.bindValue(':start', str(startHour) + ":" + str(startMinute))
+                    query.bindValue(':end', str(endHour) + ":" + str(endMinute))
+                    query.bindValue(':date', date)
+                    query.bindValue(':id', scheduleId)
+                    query.exec()
+
+                    self.nextMenu = MenuListSchedule(1)
+                    self.nextMenu.show()
+                    self.close()
+
+                else:
+                    print("Error required input not filled")
+            else:
+                print('This Schedule clashes with existing schedule for this studio')
 
 class MenuListStudio(QWidget):
     def __init__(self, page):
