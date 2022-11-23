@@ -647,19 +647,31 @@ class MenuAddSchedule(QWidget):
         labelNamaFilm = QLabel("Film Title *", self)
         labelNamaFilm.setProperty("class", "normal")
         labelNamaFilm.setStyleSheet("font-weight: 700; background: #FFDE59;")
-        labelNamaFilm.move(350, 300)
+        labelNamaFilm.move(350, 290)
 
         inputNamaFilm = QLineEdit(self)
         inputNamaFilm.setFixedSize(600, 38)
         inputNamaFilm.setStyleSheet("background: #F5F5F5; padding-left: 5px; font-size: 16px;")
         inputNamaFilm.setPlaceholderText("Input Film Title...")
         inputNamaFilm.setText(filmName)
-        inputNamaFilm.move(350, 340)
+        inputNamaFilm.move(350, 330)
+
+        labelTanggal = QLabel("Date *", self)
+        labelTanggal.setProperty("class", "normal")
+        labelTanggal.setStyleSheet("font-weight: 700; background: #FFDE59;")
+        labelTanggal.move(350, 400)
+
+        inputTanggal = QLineEdit(self)
+        inputTanggal.setFixedSize(600, 38)
+        inputTanggal.setStyleSheet("background: #F5F5F5; padding-left: 5px; font-size: 16px;")
+        inputTanggal.setPlaceholderText("Format (YYYY-MM-DD)")
+        inputTanggal.setMaxLength(10)
+        inputTanggal.move(350, 440)
 
         labelStartTime = QLabel("Start Time (XX:XX) *", self)
         labelStartTime.setProperty("class", "normal")
         labelStartTime.setStyleSheet("font-weight: 700; background: #FFDE59;")
-        labelStartTime.move(350, 410)
+        labelStartTime.move(350, 510)
 
         inputStartTimeHour = QLineEdit(self)
         inputStartTimeHour.setFixedSize(70, 38)
@@ -667,7 +679,7 @@ class MenuAddSchedule(QWidget):
         inputStartTimeHour.setPlaceholderText("00")
         inputStartTimeHour.setText("00")
         inputStartTimeHour.setMaxLength(2)
-        inputStartTimeHour.move(350, 450)
+        inputStartTimeHour.move(350, 550)
 
         inputStartTimeMinute = QLineEdit(self)
         inputStartTimeMinute.setFixedSize(70, 38)
@@ -675,29 +687,29 @@ class MenuAddSchedule(QWidget):
         inputStartTimeMinute.setPlaceholderText("00")
         inputStartTimeMinute.setText("00")
         inputStartTimeMinute.setMaxLength(2)
-        inputStartTimeMinute.move(430, 450)
+        inputStartTimeMinute.move(430, 550)
 
         buttonDuration = QPushButton("Generate End Time", self)
         buttonDuration.setProperty("class", "button")
         buttonDuration.setStyleSheet("width: 180px; height:30px; font-size:16px;")
-        buttonDuration.move(565, 455)
+        buttonDuration.move(565, 555)
         buttonDuration.clicked.connect(lambda: self.generateEndTime(inputStartTimeHour.text(), inputStartTimeMinute.text(), filmDuration, inputEndTimeHour, inputEndTimeMinute))
 
         labelEndTime = QLabel("End Time (XX:XX) *", self)
         labelEndTime.setProperty("class", "normal")
         labelEndTime.setStyleSheet("font-weight: 700; background: #FFDE59;")
-        labelEndTime.move(770, 410)
+        labelEndTime.move(770, 510)
 
         inputEndTimeHour = QLineEdit(self)
         inputEndTimeHour.setFixedSize(70, 38)
         inputEndTimeHour.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
-        inputEndTimeHour.move(800, 450)
+        inputEndTimeHour.move(800, 550)
         inputEndTimeHour.setReadOnly(True)
 
         inputEndTimeMinute = QLineEdit(self)
         inputEndTimeMinute.setFixedSize(70, 38)
         inputEndTimeMinute.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
-        inputEndTimeMinute.move(880, 450)
+        inputEndTimeMinute.move(880, 550)
         inputEndTimeMinute.setReadOnly(True)
 
         buttonBatal = QPushButton("Batal", self)
@@ -707,7 +719,7 @@ class MenuAddSchedule(QWidget):
 
         buttonSimpan = QPushButton("Simpan", self)
         buttonSimpan.setProperty("class", "btn-success")
-        buttonSimpan.clicked.connect(lambda: self.submitAddSchedule(inputStudioId.text(), inputNamaFilm.text(), inputStartTimeHour.text(), inputStartTimeMinute.text(), inputEndTimeHour.text(), inputEndTimeMinute.text()))
+        buttonSimpan.clicked.connect(lambda: self.submitAddSchedule(inputStudioId.text(), inputNamaFilm.text(), inputStartTimeHour.text(), inputStartTimeMinute.text(), inputEndTimeHour.text(), inputEndTimeMinute.text(), inputTanggal.text()))
         buttonSimpan.move(675, 620)
 
     def logout(self):
@@ -730,14 +742,15 @@ class MenuAddSchedule(QWidget):
         endHour.setText(str(end.time())[:2])
         endMinute.setText(str(end.time())[3:5])
 
-    def submitAddSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute):
-        if (studioId and filmTitle and startHour and startMinute and endHour and endMinute):
+    def submitAddSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute, date):
+        if (studioId and filmTitle and startHour and startMinute and endHour and endMinute and date):
             query = QSqlQuery()
-            query.prepare("INSERT INTO screening (StudioID, FilmTitle, StartTime, EndTime) VALUES (:studio, :title, :start, :end)")
+            query.prepare("INSERT INTO screening (StudioID, FilmTitle, StartTime, EndTime, Date) VALUES (:studio, :title, :start, :end, :date)")
             query.bindValue(':studio', studioId)
             query.bindValue(':title', filmTitle)
             query.bindValue(':start', str(startHour) + ":" + str(startMinute))
             query.bindValue(':end', str(endHour) + ":" + str(endMinute))
+            query.bindValue(':date', date)
             query.exec()
 
             self.nextMenu = MenuListSchedule(1)
@@ -1081,13 +1094,13 @@ class MenuEditSchedule(QWidget):
         studioId = ""
         filmName = ""
         startTime = ""
+        date = ""
 
         if query.first():
             studioId = query.value(1)
             filmName = query.value(2)
             startTime = query.value(3)
-
-        print(studioId, filmName, startTime)
+            date = query.value(5)
 
         query = QSqlQuery()
         query.prepare("SELECT * FROM film WHERE Title LIKE :title")
@@ -1114,7 +1127,7 @@ class MenuEditSchedule(QWidget):
         labelNamaFilm = QLabel("Film Title *", self)
         labelNamaFilm.setProperty("class", "normal")
         labelNamaFilm.setStyleSheet("font-weight: 700; background: #FFDE59;")
-        labelNamaFilm.move(350, 300)
+        labelNamaFilm.move(350, 290)
 
         inputNamaFilm = QLineEdit(self)
         inputNamaFilm.setFixedSize(600, 38)
@@ -1122,12 +1135,25 @@ class MenuEditSchedule(QWidget):
         inputNamaFilm.setPlaceholderText("Input Film Title...")
         inputNamaFilm.setText(filmName)
         inputNamaFilm.setReadOnly(True)
-        inputNamaFilm.move(350, 340)
+        inputNamaFilm.move(350, 330)
+
+        labelTanggal = QLabel("Date *", self)
+        labelTanggal.setProperty("class", "normal")
+        labelTanggal.setStyleSheet("font-weight: 700; background: #FFDE59;")
+        labelTanggal.move(350, 400)
+
+        inputTanggal = QLineEdit(self)
+        inputTanggal.setFixedSize(600, 38)
+        inputTanggal.setStyleSheet("background: #F5F5F5; padding-left: 5px; font-size: 16px;")
+        inputTanggal.setPlaceholderText("Format (YYYY-MM-DD)")
+        inputTanggal.setMaxLength(10)
+        inputTanggal.setText(date)
+        inputTanggal.move(350, 440)
 
         labelStartTime = QLabel("Start Time (XX:XX) *", self)
         labelStartTime.setProperty("class", "normal")
         labelStartTime.setStyleSheet("font-weight: 700; background: #FFDE59;")
-        labelStartTime.move(350, 410)
+        labelStartTime.move(350, 510)
 
         inputStartTimeHour = QLineEdit(self)
         inputStartTimeHour.setFixedSize(70, 38)
@@ -1135,7 +1161,7 @@ class MenuEditSchedule(QWidget):
         inputStartTimeHour.setPlaceholderText("00")
         inputStartTimeHour.setMaxLength(2)
         inputStartTimeHour.setText(startTime[:2])
-        inputStartTimeHour.move(350, 450)
+        inputStartTimeHour.move(350, 550)
 
         inputStartTimeMinute = QLineEdit(self)
         inputStartTimeMinute.setFixedSize(70, 38)
@@ -1143,12 +1169,12 @@ class MenuEditSchedule(QWidget):
         inputStartTimeMinute.setPlaceholderText("00")
         inputStartTimeMinute.setMaxLength(2)
         inputStartTimeMinute.setText(startTime[3:5])
-        inputStartTimeMinute.move(430, 450)
+        inputStartTimeMinute.move(430, 550)
 
         buttonDuration = QPushButton("Generate End Time", self)
         buttonDuration.setProperty("class", "button")
         buttonDuration.setStyleSheet("width: 180px; height:30px; font-size:16px;")
-        buttonDuration.move(565, 455)
+        buttonDuration.move(565, 555)
         buttonDuration.clicked.connect(
             lambda: self.generateEndTime(inputStartTimeHour.text(), inputStartTimeMinute.text(), filmDuration,
                                          inputEndTimeHour, inputEndTimeMinute))
@@ -1156,18 +1182,18 @@ class MenuEditSchedule(QWidget):
         labelEndTime = QLabel("End Time (XX:XX) *", self)
         labelEndTime.setProperty("class", "normal")
         labelEndTime.setStyleSheet("font-weight: 700; background: #FFDE59;")
-        labelEndTime.move(770, 410)
+        labelEndTime.move(770, 510)
 
         inputEndTimeHour = QLineEdit(self)
         inputEndTimeHour.setFixedSize(70, 38)
         inputEndTimeHour.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
-        inputEndTimeHour.move(800, 450)
+        inputEndTimeHour.move(800, 550)
         inputEndTimeHour.setReadOnly(True)
 
         inputEndTimeMinute = QLineEdit(self)
         inputEndTimeMinute.setFixedSize(70, 38)
         inputEndTimeMinute.setStyleSheet("background: #F5F5F5; padding-left: 25px; font-size: 16px;")
-        inputEndTimeMinute.move(880, 450)
+        inputEndTimeMinute.move(880, 550)
         inputEndTimeMinute.setReadOnly(True)
 
         buttonBatal = QPushButton("Batal", self)
@@ -1177,10 +1203,7 @@ class MenuEditSchedule(QWidget):
 
         buttonSimpan = QPushButton("Simpan", self)
         buttonSimpan.setProperty("class", "btn-success")
-        buttonSimpan.clicked.connect(
-            lambda: self.submitEditSchedule(inputStudioId.text(), inputNamaFilm.text(), inputStartTimeHour.text(),
-                                           inputStartTimeMinute.text(), inputEndTimeHour.text(),
-                                           inputEndTimeMinute.text(), scheduleId))
+        buttonSimpan.clicked.connect(lambda: self.submitAddSchedule(inputStudioId.text(), inputNamaFilm.text(), inputStartTimeHour.text(), inputStartTimeMinute.text(), inputEndTimeHour.text(), inputEndTimeMinute.text(), inputTanggal.text()))
         buttonSimpan.move(675, 620)
 
     def logout(self):
@@ -1201,16 +1224,16 @@ class MenuEditSchedule(QWidget):
         endHour.setText(str(end.time())[:2])
         endMinute.setText(str(end.time())[3:5])
 
-    def submitEditSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute, scheduleId):
-        if (studioId and filmTitle and startHour and startMinute and endHour and endMinute):
+    def submitAddSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute, date):
+        if (studioId and filmTitle and startHour and startMinute and endHour and endMinute and date):
             query = QSqlQuery()
             query.prepare(
-                "UPDATE screening SET StudioID = :studio, FilmTitle = :title, StartTime = :start, EndTime = :end WHERE ScreeningId = :id")
+                "INSERT INTO screening (StudioID, FilmTitle, StartTime, EndTime, Date) VALUES (:studio, :title, :start, :end, :date)")
             query.bindValue(':studio', studioId)
             query.bindValue(':title', filmTitle)
             query.bindValue(':start', str(startHour) + ":" + str(startMinute))
             query.bindValue(':end', str(endHour) + ":" + str(endMinute))
-            query.bindValue(':id', scheduleId)
+            query.bindValue(':date', date)
             query.exec()
 
             self.nextMenu = MenuListSchedule(1)
@@ -1266,15 +1289,15 @@ class MenuListStudio(QWidget):
 
         # Middle
 
-        # Query For Debug
+        # Query Debug
 
-        db = QSqlDatabase.addDatabase('QSQLITE')
-        db.setDatabaseName(db_path)
-
-        if not db.open():
-            print("CONNECTION FAILED")
-        else:
-            print("CONNECTED TO DB SUCCESSFULLY")
+        # db = QSqlDatabase.addDatabase('QSQLITE')
+        # db.setDatabaseName(db_path)
+        #
+        # if not db.open():
+        #     print("CONNECTION FAILED")
+        # else:
+        #     print("CONNECTED TO DB SUCCESSFULLY")
 
         query = QSqlQuery()
         query.prepare("SELECT * FROM STUDIO")
@@ -1496,7 +1519,7 @@ class MenuListStudio(QWidget):
             buttonPrevPage.clicked.connect(lambda: self.changePage(self.page-1))
 
         buttonNextPage = QPushButton("Next Page >>", self)
-        if(countRecords < (self.page * 5)):
+        if(countRecords < (self.page * 5 + 1)):
             buttonNextPage.setProperty("class", "btn-disabled")
             buttonNextPage.move(700, 600)
         else:
@@ -1593,15 +1616,15 @@ class MenuListFilm(QWidget):
 
         # Middle
 
-        # Query For Debug
+        # Query Debug
 
-        db = QSqlDatabase.addDatabase('QSQLITE')
-        db.setDatabaseName(db_path)
-
-        if not db.open():
-            print("CONNECTION FAILED")
-        else:
-            print("CONNECTED TO DB SUCCESSFULLY")
+        # db = QSqlDatabase.addDatabase('QSQLITE')
+        # db.setDatabaseName(db_path)
+        #
+        # if not db.open():
+        #     print("CONNECTION FAILED")
+        # else:
+        #     print("CONNECTED TO DB SUCCESSFULLY")
 
         query = QSqlQuery()
         query.prepare("SELECT * FROM film")
@@ -1855,7 +1878,7 @@ class MenuListFilm(QWidget):
             buttonPrevPage.clicked.connect(lambda: self.changePage(self.page - 1))
 
         buttonNextPage = QPushButton("Next Page >>", self)
-        if (countRecords < (self.page * 5)):
+        if (countRecords < (self.page * 5 + 1)):
             buttonNextPage.setProperty("class", "btn-disabled")
             buttonNextPage.move(700, 600)
         else:
@@ -1967,7 +1990,7 @@ class MenuListSchedule(QWidget):
 
         # Middle
 
-        # Query For Debug
+        # Query Debug
 
         # db = QSqlDatabase.addDatabase('QSQLITE')
         # db.setDatabaseName(db_path)
@@ -2004,6 +2027,7 @@ class MenuListSchedule(QWidget):
         listFilmTitle = []
         listStartTime = []
         listEndTime = []
+        listDate = []
 
         if query.first():
             listScreeningID.append(query.value(0))
@@ -2011,12 +2035,15 @@ class MenuListSchedule(QWidget):
             listFilmTitle.append(query.value(2))
             listStartTime.append(query.value(3))
             listEndTime.append(query.value(4))
+            listDate.append(query.value(5))
+
             while query.next():
                 listScreeningID.append(query.value(0))
                 listStudioID.append(query.value(1))
                 listFilmTitle.append(query.value(2))
                 listStartTime.append(query.value(3))
                 listEndTime.append(query.value(4))
+                listDate.append(query.value(5))
 
         query.finish()
 
@@ -2024,26 +2051,32 @@ class MenuListSchedule(QWidget):
 
         tableHeader = QPushButton("", self)
         tableHeader.setProperty("class", "table-heading")
+        tableHeader.setStyleSheet('background: #3084D1')
         tableHeader.move(90, 150)
 
-        tableHeaderCol1 = QLabel("ID Screening", self)
+        tableHeaderCol1 = QLabel("ID Sch", self)
         tableHeaderCol1.setProperty("class", "table-heading")
+        tableHeaderCol1.setStyleSheet('background: #3084D1')
         tableHeaderCol1.move(110, 165)
 
         tableHeaderCol2 = QLabel("ID Studio", self)
         tableHeaderCol2.setProperty("class", "table-heading")
-        tableHeaderCol2.move(270, 165)
+        tableHeaderCol2.setStyleSheet('background: #3084D1')
+        tableHeaderCol2.move(200, 165)
 
         tableHeaderCol3 = QLabel("Film Title", self)
         tableHeaderCol3.setProperty("class", "table-heading")
-        tableHeaderCol3.move(500, 165)
+        tableHeaderCol3.setStyleSheet('background: #3084D1')
+        tableHeaderCol3.move(450, 165)
 
         tableHeaderCol4 = QLabel("Time", self)
         tableHeaderCol4.setProperty("class", "table-heading")
-        tableHeaderCol4.move(840, 165)
+        tableHeaderCol4.setStyleSheet('background: #3084D1')
+        tableHeaderCol4.move(800, 165)
 
         tableHeaderCol5 = QLabel("Action", self)
         tableHeaderCol5.setProperty("class", "table-heading")
+        tableHeaderCol5.setStyleSheet('background: #3084D1')
         tableHeaderCol5.move(1040, 165)
 
         # ITEM 1
@@ -2055,19 +2088,19 @@ class MenuListSchedule(QWidget):
         if len(listScreeningID) > 0:
             tableItem1Col1 = QLabel(str(listScreeningID[0]), self)
             tableItem1Col1.setProperty("class", "table-item")
-            tableItem1Col1.move(165, 225)
+            tableItem1Col1.move(135, 225)
 
             tableItem1Col2 = QLabel(str(listStudioID[0]), self)
             tableItem1Col2.setProperty("class", "table-item")
-            tableItem1Col2.move(305, 225)
+            tableItem1Col2.move(235, 225)
 
             tableItem1Col3 = QLabel(str(listFilmTitle[0]), self)
             tableItem1Col3.setProperty("class", "table-item")
-            tableItem1Col3.move(390, 225)
+            tableItem1Col3.move(320, 225)
 
-            tableItem1Col4 = QLabel(str(listStartTime[0]) + " - " + str(listEndTime[0]), self)
+            tableItem1Col4 = QLabel(str(listStartTime[0]) + " - " + str(listEndTime[0] + " | " + str(listDate[0])), self)
             tableItem1Col4.setProperty("class", "table-item")
-            tableItem1Col4.move(800, 225)
+            tableItem1Col4.move(700, 225)
 
             tableItem1Col5 = QPushButton("Edit", self)
             tableItem1Col5.setProperty("class", "btn-edit")
@@ -2088,19 +2121,19 @@ class MenuListSchedule(QWidget):
         if len(listScreeningID) > 1:
             tableItem2Col1 = QLabel(str(listScreeningID[1]), self)
             tableItem2Col1.setProperty("class", "table-item")
-            tableItem2Col1.move(165, 285)
+            tableItem2Col1.move(135, 285)
 
             tableItem2Col2 = QLabel(str(listStudioID[1]), self)
             tableItem2Col2.setProperty("class", "table-item")
-            tableItem2Col2.move(305, 285)
+            tableItem2Col2.move(235, 285)
 
             tableItem2Col3 = QLabel(str(listFilmTitle[1]), self)
             tableItem2Col3.setProperty("class", "table-item")
-            tableItem2Col3.move(390, 285)
+            tableItem2Col3.move(320, 285)
 
-            tableItem2Col4 = QLabel(str(listStartTime[1]) + " - " + str(listEndTime[1]), self)
+            tableItem2Col4 = QLabel(str(listStartTime[1]) + " - " + str(listEndTime[1] + " | " + str(listDate[1])), self)
             tableItem2Col4.setProperty("class", "table-item")
-            tableItem2Col4.move(800, 285)
+            tableItem2Col4.move(700, 285)
 
             tableItem2Col5 = QPushButton("Edit", self)
             tableItem2Col5.setProperty("class", "btn-edit")
@@ -2121,19 +2154,19 @@ class MenuListSchedule(QWidget):
         if len(listScreeningID) > 2:
             tableItem3Col1 = QLabel(str(listScreeningID[2]), self)
             tableItem3Col1.setProperty("class", "table-item")
-            tableItem3Col1.move(165, 345)
+            tableItem3Col1.move(135, 345)
 
             tableItem3Col2 = QLabel(str(listStudioID[2]), self)
             tableItem3Col2.setProperty("class", "table-item")
-            tableItem3Col2.move(305, 345)
+            tableItem3Col2.move(235, 345)
 
             tableItem3Col3 = QLabel(str(listFilmTitle[2]), self)
             tableItem3Col3.setProperty("class", "table-item")
-            tableItem3Col3.move(390, 345)
+            tableItem3Col3.move(320, 345)
 
-            tableItem3Col4 = QLabel(str(listStartTime[2]) + " - " + str(listEndTime[2]), self)
+            tableItem3Col4 = QLabel(str(listStartTime[2]) + " - " + str(listEndTime[2] + " | " + str(listDate[2])), self)
             tableItem3Col4.setProperty("class", "table-item")
-            tableItem3Col4.move(800, 345)
+            tableItem3Col4.move(700, 345)
 
             tableItem3Col5 = QPushButton("Edit", self)
             tableItem3Col5.setProperty("class", "btn-edit")
@@ -2154,19 +2187,19 @@ class MenuListSchedule(QWidget):
         if len(listScreeningID) > 3:
             tableItem4Col1 = QLabel(str(listScreeningID[3]), self)
             tableItem4Col1.setProperty("class", "table-item")
-            tableItem4Col1.move(165, 405)
+            tableItem4Col1.move(135, 405)
 
             tableItem4Col2 = QLabel(str(listStudioID[3]), self)
             tableItem4Col2.setProperty("class", "table-item")
-            tableItem4Col2.move(305, 405)
+            tableItem4Col2.move(235, 405)
 
             tableItem4Col3 = QLabel(str(listFilmTitle[3]), self)
             tableItem4Col3.setProperty("class", "table-item")
-            tableItem4Col3.move(390, 405)
+            tableItem4Col3.move(320, 405)
 
-            tableItem4Col4 = QLabel(str(listStartTime[3]) + " - " + str(listEndTime[3]), self)
+            tableItem4Col4 = QLabel(str(listStartTime[3]) + " - " + str(listEndTime[3] + " | " + str(listDate[3])), self)
             tableItem4Col4.setProperty("class", "table-item")
-            tableItem4Col4.move(800, 405)
+            tableItem4Col4.move(700, 405)
 
             tableItem4Col5 = QPushButton("Edit", self)
             tableItem4Col5.setProperty("class", "btn-edit")
@@ -2187,19 +2220,19 @@ class MenuListSchedule(QWidget):
         if len(listScreeningID) > 4:
             tableItem5Col1 = QLabel(str(listScreeningID[4]), self)
             tableItem5Col1.setProperty("class", "table-item")
-            tableItem5Col1.move(165, 465)
+            tableItem5Col1.move(135, 465)
 
             tableItem5Col2 = QLabel(str(listStudioID[4]), self)
             tableItem5Col2.setProperty("class", "table-item")
-            tableItem5Col2.move(305, 465)
+            tableItem5Col2.move(235, 465)
 
             tableItem5Col3 = QLabel(str(listFilmTitle[4]), self)
             tableItem5Col3.setProperty("class", "table-item")
-            tableItem5Col3.move(390, 465)
+            tableItem5Col3.move(320, 465)
 
-            tableItem5Col4 = QLabel(str(listStartTime[4]) + " - " + str(listEndTime[4]), self)
+            tableItem5Col4 = QLabel(str(listStartTime[4]) + " - " + str(listEndTime[4] + " | " + str(listDate[4])), self)
             tableItem5Col4.setProperty("class", "table-item")
-            tableItem5Col4.move(800, 465)
+            tableItem5Col4.move(700, 465)
 
             tableItem5Col5 = QPushButton("Edit", self)
             tableItem5Col5.setProperty("class", "btn-edit")
@@ -2553,7 +2586,7 @@ class MenuListTicket(QWidget):
             buttonPrevPage.move(400, 520)
 
         buttonNextPage = QPushButton("Next Page >>", self)
-        if (countRecords < (self.page * 5)):
+        if (countRecords < (self.page * 5 + 1)):
             buttonNextPage.setProperty("class", "btn-disabled")
             buttonNextPage.move(700, 520)
         else:
@@ -2570,6 +2603,11 @@ class MenuListTicket(QWidget):
     def logout(self):
         time.sleep(1)
         self.nextMenu = LoginWindow()
+        self.nextMenu.show()
+        self.close()
+
+    def changePage(self, next):
+        self.nextMenu = MenuListTicket(next)
         self.nextMenu.show()
         self.close()
 
@@ -2896,7 +2934,7 @@ if __name__ == '__main__':
         
         ''')
 
-    mainApp = MenuListFilm(1)
+    mainApp = LoginWindow()
     mainApp.show()
 
     try:
