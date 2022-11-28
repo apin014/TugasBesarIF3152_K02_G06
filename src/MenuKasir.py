@@ -72,17 +72,18 @@ class CineManageModel(object):
 			if not query.exec():
 				QtCore.qDebug(query.lastError().text())
 
-class Ui_MainWindow(object):
-	def setupUi(self, MainWindow):
-		MainWindow.setObjectName("Cashier Menu")
-		MainWindow.resize(1280, 720)
-		MainWindow.setMinimumSize(QtCore.QSize(1280, 720))
-		MainWindow.setMaximumSize(QtCore.QSize(1280, 720))
+class Ui_MainWindow(QtWidgets.QMainWindow):
+	def setupUi(self):
+		super().__init__()
+		self.setObjectName("Cashier Menu")
+		self.resize(1280, 720)
+		self.setMinimumSize(QtCore.QSize(1280, 720))
+		self.setMaximumSize(QtCore.QSize(1280, 720))
 		icon = QtGui.QIcon()
 		icon.addPixmap(QtGui.QPixmap("../img/cinemanage.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-		MainWindow.setWindowIcon(icon)
+		self.setWindowIcon(icon)
 		self.model = CineManageModel(os.path.join(current_dir, "cineManage_V3.db"))
-		self.centralwidget = QtWidgets.QWidget(MainWindow)
+		self.centralwidget = QtWidgets.QWidget(self)
 		self.centralwidget.setMinimumSize(QtCore.QSize(1280, 720))
 		self.centralwidget.setMaximumSize(QtCore.QSize(1280, 720))
 		self.centralwidget.setStyleSheet("QWidget {\n"
@@ -213,6 +214,7 @@ class Ui_MainWindow(object):
 		"    background: #0445A9\n"
 		"}")
 		self.logoutButton.setObjectName("logoutButton")
+		self.logoutButton.clicked.connect(self.logout)
 		self.gridLayout.addWidget(self.logoutButton, 1, 5, 1, 1)
 		self.loggedInLabel = QtWidgets.QLabel(self.top_bar)
 		self.loggedInLabel.setStyleSheet("QLabel {\n"
@@ -330,25 +332,28 @@ class Ui_MainWindow(object):
 		self.displayScreeningInfo()
 		self.displayTickets()
 		self.orderTickets()
-		MainWindow.setCentralWidget(self.centralwidget)
+  
+		self.setActivePageButton()
+  
+		self.setCentralWidget(self.centralwidget)
 
-		self.retranslateUi(MainWindow)
+		self.retranslateUi()
 		self.stackedWidget.setCurrentIndex(1)
-		QtCore.QMetaObject.connectSlotsByName(MainWindow)
+		QtCore.QMetaObject.connectSlotsByName(self)
 
-	def retranslateUi(self, MainWindow):
+	def retranslateUi(self):
 		_translate = QtCore.QCoreApplication.translate
-		MainWindow.setWindowTitle(_translate("MainWindow", "Cashier Menu"))
-		self.orderSuccessMessage.setText(_translate("MainWindow", "Order Successful!"))
-		self.seeTickets.setText(_translate("MainWindow", "See Tickets"))
-		self.logoutButton.setText(_translate("MainWindow", "Logout"))
-		self.loggedInLabel.setText(_translate("MainWindow", "You\'re logged in as:"))
-		self.cashierLabel.setText(_translate("MainWindow", "Cashier"))
-		self.orderTicketButton.setText(_translate("MainWindow", "Order Tickets\n"
+		self.setWindowTitle(_translate("self", "Cashier Menu"))
+		self.orderSuccessMessage.setText(_translate("self", "Order Successful!"))
+		self.seeTickets.setText(_translate("self", "See Tickets"))
+		self.logoutButton.setText(_translate("self", "Logout"))
+		self.loggedInLabel.setText(_translate("self", "You\'re logged in as:"))
+		self.cashierLabel.setText(_translate("self", "Cashier"))
+		self.orderTicketButton.setText(_translate("self", "Order Tickets\n"
 		"Now"))
-		self.screeningInfoButton.setText(_translate("MainWindow", "Screening\n"
+		self.screeningInfoButton.setText(_translate("self", "Screening\n"
 		"Information"))
-		self.orderHistoryButton.setText(_translate("MainWindow", "Order\n"
+		self.orderHistoryButton.setText(_translate("self", "Order\n"
 		"History"))
   
 	def displayScreeningInfo(self):
@@ -738,14 +743,19 @@ class Ui_MainWindow(object):
 		self.ticketScrollArea.setWidget(ticketScrollAreaWidgetContents)
    
 	def changeToScreenings(self):
+		self.displayScreeningInfo()
 		self.stackedWidget.setCurrentWidget(self.screeningMenu)
+		self.setActivePageButton()
   
 	def changeToOrder(self):
+		self.orderTickets()
 		self.stackedWidget.setCurrentWidget(self.orderMenu)
+		self.setActivePageButton()
   
 	def changeToHistory(self):
 		self.displayTickets()
 		self.stackedWidget.setCurrentWidget(self.historyMenu)
+		self.setActivePageButton()
 
 	def check(self, widget):
 		print(widget.objectName())
@@ -1530,14 +1540,59 @@ class Ui_MainWindow(object):
 			self.model.createTicket(order[0], order[1], studioID)
 		self.stackedWidget.setCurrentWidget(self.successPage)
   
+	def logout(self):
+		self.close()
+		os.system('python main.py')
+  
+	def setActivePageButton(self):
+		if self.stackedWidget.currentWidget() == self.orderMenu:
+			button = self.orderTicketButton
+			others = [self.orderHistoryButton, self.screeningInfoButton]
+   
+		elif self.stackedWidget.currentWidget() == self.historyMenu:
+			button = self.orderHistoryButton
+			others = [self.orderTicketButton, self.screeningInfoButton]
+   
+		elif self.stackedWidget.currentWidget() == self.screeningMenu:
+			button = self.screeningInfoButton
+			others = [self.orderTicketButton, self.orderHistoryButton]
+
+		button.setStyleSheet("QPushButton {\n"
+	"            font-family: \'Inter\';\n"
+	"            font-style: normal;\n"
+	"            font-weight: 700;\n"
+	"            font-size: 20px;\n"
+	"            line-height: 87.69%;\n"
+	"\n"
+	"            color: #FFFFFF;\n"
+	"            background: #7C4525;\n"
+	"            border-radius: 20px;\n"
+	"        }")
+		button.setDisabled(True)
+		for button in others:
+			button.setStyleSheet("QPushButton {\n"
+		"            font-family: \'Inter\';\n"
+		"            font-style: normal;\n"
+		"            font-weight: 700;\n"
+		"            font-size: 20px;\n"
+		"            line-height: 87.69%;\n"
+		"\n"
+		"            color: #FFFFFF;\n"
+		"            background: #EB8446;\n"
+		"            border-radius: 20px;\n"
+		"        }\n"
+		"\n"
+		"QPushButton:pressed {\n"
+		"    background: #7C4525\n"
+		"}")
+			button.setDisabled(False)
 
 if __name__ == "__main__":
 	app = QtWidgets.QApplication(sys.argv)
-	MainWindow = QtWidgets.QMainWindow()
  
 	ui = Ui_MainWindow()
-	ui.setupUi(MainWindow)
+	ui.setupUi()
 
 	ui.stackedWidget.setCurrentWidget(ui.orderMenu)
-	MainWindow.show()
+	ui.show()
 	sys.exit(app.exec())
