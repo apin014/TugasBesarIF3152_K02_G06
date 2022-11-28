@@ -2655,6 +2655,7 @@ class LoginWindow(QWidget):
         inputPass.setPlaceholderText("Input Password")
         inputPass.setEchoMode(QLineEdit.EchoMode.Password)
         inputPass.move(890, 360)
+        inputPass.returnPressed.connect(lambda: self.checkCredential(inputPass.text()))
 
         buttonLogin = QPushButton("Login", self)
         buttonLogin.setProperty("class", "button")
