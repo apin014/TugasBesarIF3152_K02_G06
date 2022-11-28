@@ -2,9 +2,8 @@ import time
 
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QPushButton, QLabel,
-    QLineEdit, QDialog, QListWidget, QComboBox
+    QLineEdit
 )
-from PyQt6 import QtCore
 from PyQt6.QtGui import QIcon, QPixmap
 from PyQt6.QtSql import QSqlDatabase, QSqlQuery
 
@@ -14,75 +13,7 @@ import math
 import datetime
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
-db_path = os.path.join(current_dir, "cineManage.db")
-
-class MainMenuCashier(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setWindowIcon(QIcon("../img/cinemanage.png"))
-        self.setWindowTitle("CineManage")
-        self.setContentsMargins(20, 20, 20, 20)
-        screenWidth = 1280
-        screenHeight = 720
-        self.setFixedSize(screenWidth, screenHeight)
-
-        self.nextMenu = None
-
-        # Top Bar
-
-        whiteBar = QLabel(self)
-        pixmapWhiteBar = QPixmap('../img/top_white_bar.png')
-        whiteBar.setPixmap(pixmapWhiteBar)
-        whiteBar.move(0, 0)
-
-        profile = QLabel(self)
-        pixmapProfile = QPixmap('../img/profile.png')
-        profile.setPixmap(pixmapProfile)
-        profile.setStyleSheet("background: #FFFFFF")
-        profile.move(30, 20)
-
-        buttonLogout = QPushButton("Logout", self)
-        buttonLogout.setProperty("class", "button")
-        buttonLogout.clicked.connect(self.logout)
-        buttonLogout.move(1120, 30)
-
-        labelLoggedIn = QLabel("You're logged in as", self)
-        labelLoggedIn.setProperty("class", "normal")
-        labelLoggedIn.setStyleSheet("font-weight: 700")
-        labelLoggedIn.move(110, 20)
-
-        buttonUser = QPushButton("Cashier", self)
-        buttonUser.setProperty("class", "button")
-        buttonUser.setStyleSheet("background: #F04D4D")
-        buttonUser.move(110, 45)
-
-        # Middle
-
-        cmmain = QLabel(self)
-        pixmapCmmain = QPixmap('../img/cmmain.png')
-        cmmain.setPixmap(pixmapCmmain)
-        cmmain.move(470, 140)
-
-        buttonPesanTiket = QPushButton("Pesan Tiket", self)
-        buttonPesanTiket.setProperty("class", "option")
-        # buttonPesanTiket.clicked.connect()
-        buttonPesanTiket.move(430, 300)
-
-        buttonRincianPenayangan = QPushButton("Rincian Penayangan", self)
-        buttonRincianPenayangan.setProperty("class", "option")
-        # buttonRincianPenayangan.clicked.connect()
-        buttonRincianPenayangan.move(430, 410)
-
-        buttonRiwayatPemesanan = QPushButton("Riwayat Pemesanan", self)
-        buttonRiwayatPemesanan.setProperty("class", "option")
-        # buttonRiwayatPemesanan.clicked.connect()
-        buttonRiwayatPemesanan.move(430, 520)
-
-    def logout(self):
-        time.sleep(1)
-        self.nextMenu = LoginWindow()
-        self.nextMenu.show()
-        self.close()
+db_path = os.path.join(current_dir, "cineManage_V3.db")
 
 class MainMenuAdmin(QWidget):
     def __init__(self):
@@ -183,11 +114,6 @@ class MainMenuAdmin(QWidget):
         self.nextMenu = MenuListTicket(1)
         self.nextMenu.show()
         self.close()
-
-    # def debug(self):
-    #     dlg = QDialog(self)
-    #     dlg.setWindowTitle("CineManage - Debug")
-    #     dlg.exec()
 
 class MenuSetPassword(QWidget):
     def __init__(self):
@@ -2756,12 +2682,11 @@ class LoginWindow(QWidget):
         if query.first():
             if query.value('password') == password:
                 if query.value('role') == "Cashier":
-                    time.sleep(1)
-                    self.nextMenu = MainMenuCashier()
-                    self.nextMenu.show()
                     self.close()
                     print('LOGIN SUCCESS')
                     query.finish()
+                    os.system('python MenuKasir.py')
+
                 elif query.value('role') == "Admin":
                     time.sleep(1)
                     self.nextMenu = MainMenuAdmin()
