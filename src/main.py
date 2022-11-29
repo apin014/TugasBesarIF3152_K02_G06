@@ -580,6 +580,7 @@ class MenuAddSchedule(QWidget):
         inputNamaFilm.setStyleSheet("background: #F5F5F5; padding-left: 5px; font-size: 16px;")
         inputNamaFilm.setPlaceholderText("Input Film Title...")
         inputNamaFilm.setText(filmName)
+        inputNamaFilm.setReadOnly(True)
         inputNamaFilm.move(350, 330)
 
         labelTanggal = QLabel("Date *", self)
@@ -687,9 +688,7 @@ class MenuAddSchedule(QWidget):
 
         query.finish()
 
-
-
-        if len(listStartTime) > 5:
+        if len(listStartTime) > 4:
             print("This Studio has reached max screening for this date")
 
         else:
@@ -2291,7 +2290,7 @@ class MenuListSchedule(QWidget):
         query.exec()
         query.finish()
 
-        self.nextMenu = MenuListFilm(self.page)
+        self.nextMenu = MenuListSchedule(self.page)
         self.nextMenu.show()
         self.close()
 
@@ -2674,7 +2673,6 @@ class LoginWindow(QWidget):
             print("CONNECTED TO DB SUCCESSFULLY")
 
     def checkCredential(self, password):
-        print("PASSWORD: " + password)
         query = QSqlQuery()
         query.prepare('SELECT * FROM user WHERE password=:pass')
         query.bindValue(':pass', password)
