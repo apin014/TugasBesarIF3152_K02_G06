@@ -462,7 +462,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 		self.screeningInfoScrollArea.setWidget(screeningScrollAreaWidgetContents)
 	
 	def orderTickets(self):
-		data = self.model.fetch("SELECT screeningid, filmtitle, date, starttime, endtime, studio.name, studio.capacity FROM screening INNER JOIN studio ON screening.studioid = studio.studioid;")
+		data = self.model.fetch("SELECT screeningid, filmtitle, date, starttime, endtime, studio.name, studio.capacity FROM screening INNER JOIN studio ON screening.studioid = studio.studioid ORDER BY DATE(date) DESC;")
+		ahead = []
 		orderScrollAreaWidgetContents_6 = QtWidgets.QWidget()
 		orderScrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 1071, 581))
 		orderScrollAreaWidgetContents_6.setObjectName("orderScrollAreaWidgetContents_6")
@@ -471,6 +472,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 		verticalLayout_5.setContentsMargins(-1, -1, -1, 11)
 		verticalLayout_5.setObjectName("verticalLayout_5")
 		for row in data:
+			if row in ahead:
+				continue
 			orderFrame = QtWidgets.QFrame(orderScrollAreaWidgetContents_6)
 			orderFrame.setMinimumSize(QtCore.QSize(1036, 275))
 			orderFrame.setMaximumSize(QtCore.QSize(1036, 275))
@@ -654,15 +657,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 			j = (jadwal2, jadwal3, jadwal4, jadwal5)
 
 			for i in range(len(data)):
-				if data[i].get("ScreeningID") == row.get("ScreeningID") or i < data.index(row):
+				if i <= data.index(row):
 					continue
 				
 				if (data[i].get("StudioID") == row.get("StudioID")) and (data[i].get("FilmTitle") == row.get("FilmTitle")) and (data[i].get("Date") == row.get("Date")):
-					for id in range(3):
+					for id in range(4):
 						if len(j[id].text()) == 0:
 							j[id].setText(data[i].get("StartTime") + " - " + data[i].get("EndTime"))
 							j[id].clicked.connect(partial(self.selectSeat, data[i].get("ScreeningID")))
 							break
+					ahead.append(data[i])
 
 			for jadwal in j:
 				if len(jadwal.text()) == 0:	
