@@ -654,7 +654,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 			j = (jadwal2, jadwal3, jadwal4, jadwal5)
 
 			for i in range(len(data)):
-				if data[i].get("ScreeningID") == row.get("ScreeningID"):
+				if data[i].get("ScreeningID") == row.get("ScreeningID") or i < data.index(row):
 					continue
 				
 				if (data[i].get("StudioID") == row.get("StudioID")) and (data[i].get("FilmTitle") == row.get("FilmTitle")) and (data[i].get("Date") == row.get("Date")):
@@ -663,7 +663,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 							j[id].setText(data[i].get("StartTime") + " - " + data[i].get("EndTime"))
 							j[id].clicked.connect(partial(self.selectSeat, data[i].get("ScreeningID")))
 							break
-					del data[i]
 
 			for jadwal in j:
 				if len(jadwal.text()) == 0:	
@@ -785,9 +784,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 		self.displayTickets()
 		self.stackedWidget.setCurrentWidget(self.historyMenu)
 		self.setActivePageButton()
-
-	def check(self, widget):
-		print(widget.objectName())
   
 	def selectSeat(self, screeningID):
 		self.stackedWidget.setCurrentWidget(self.seatSelectMenu)
