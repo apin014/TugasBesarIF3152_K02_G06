@@ -214,13 +214,21 @@ class MenuSetPassword(QWidget):
         buttonSubmit = QPushButton("Submit", self)
         buttonSubmit.setProperty("class", "button")
         buttonSubmit.move(577, 560)
-        buttonSubmit.clicked.connect(lambda: self.setPassword(str(inputPassword.text()), str(inputRePassword.text()), str(inputRole.text())))
+        buttonSubmit.clicked.connect(lambda: self.setPassword(str(inputPassword.text()), str(inputRePassword.text()), str(inputRole.text()), labelMessage))
 
         buttonReturn = QPushButton("<< Main Menu", self)
         buttonReturn.setProperty("class", "option")
         buttonReturn.setStyleSheet("width: 200px; height: 44px; font-size: 20px;")
-        buttonReturn.move(30, 660)
+        buttonReturn.move(30, 640)
         buttonReturn.clicked.connect(lambda: self.returnToMainMenu())
+
+        empty = ""
+        for i in range(100):
+            empty += " "
+        labelMessage = QLabel(empty, self)
+        labelMessage.setProperty("class", "normal")
+        labelMessage.setStyleSheet("font-weight: 600; background: #FFDE59; color: #FF0000; font-size:16px")
+        labelMessage.move(10, 695)
 
         #Debug
         # db = QSqlDatabase.addDatabase('QSQLITE')
@@ -240,19 +248,22 @@ class MenuSetPassword(QWidget):
     def setRole(self, input, role):
         input.setText(role)
 
-    def setPassword(self, password, rePassword, role):
-        if (password == rePassword):
-            query = QSqlQuery()
-            query.prepare('UPDATE user SET password = :pass WHERE role = :role')
-            query.bindValue(':pass', password)
-            query.bindValue(':role', role)
-            query.exec()
-            query.finish()
-            self.nextMenu = MainMenuAdmin()
-            self.nextMenu.show()
-            self.close()
+    def setPassword(self, password, rePassword, role, labelMessage):
+        if (password and rePassword and role):
+            if (password == rePassword):
+                query = QSqlQuery()
+                query.prepare('UPDATE user SET password = :pass WHERE role = :role')
+                query.bindValue(':pass', password)
+                query.bindValue(':role', role)
+                query.exec()
+                query.finish()
+                self.nextMenu = MainMenuAdmin()
+                self.nextMenu.show()
+                self.close()
+            else:
+                labelMessage.setText("[ERROR] Password typed incorrectly")
         else:
-            print("[ERROR]: Password wasn't typed correctly!")
+            labelMessage.setText("[ERROR] Required input not filled")
 
     def returnToMainMenu(self):
         self.nextMenu = MainMenuAdmin()
@@ -334,8 +345,16 @@ class MenuAddStudio(QWidget):
 
         buttonSimpan = QPushButton("Simpan", self)
         buttonSimpan.setProperty("class", "btn-success")
-        buttonSimpan.clicked.connect(lambda: self.submitAddStudio(inputNamaStudio.text(), inputKapasitasStudio.text()))
+        buttonSimpan.clicked.connect(lambda: self.submitAddStudio(inputNamaStudio.text(), inputKapasitasStudio.text(), labelMessage))
         buttonSimpan.move(655, 620)
+
+        empty = ""
+        for i in range(100):
+            empty += " "
+        labelMessage = QLabel(empty, self)
+        labelMessage.setProperty("class", "normal")
+        labelMessage.setStyleSheet("font-weight: 600; background: #FFDE59; color: #FF0000; font-size:16px")
+        labelMessage.move(10, 695)
 
     def logout(self):
         time.sleep(1)
@@ -348,20 +367,29 @@ class MenuAddStudio(QWidget):
         self.nextMenu.show()
         self.close()
 
-    def submitAddStudio(self, name, capacity):
-        if (name and capacity):
-            query = QSqlQuery()
-            query.prepare("INSERT INTO studio (Name, Capacity) VALUES (:name, :capacity)")
-            query.bindValue(':name', name[:30])
-            query.bindValue(':capacity', int(capacity))
-            query.exec()
+    def submitAddStudio(self, name, capacity, labelMessage):
 
-            self.nextMenu = MenuListStudio(1)
-            self.nextMenu.show()
-            self.close()
+        query = QSqlQuery()
+        query.prepare("SELECT * FROM studio where name LIKE :name")
+        query.bindValue(':name', name[:30])
+        query.exec()
 
+        if query.first():
+            labelMessage.setText("[ERROR] Studio with this name already exist")
         else:
-            print("Error required input not filled")
+            if (name and capacity):
+                query = QSqlQuery()
+                query.prepare("INSERT INTO studio (Name, Capacity) VALUES (:name, :capacity)")
+                query.bindValue(':name', name[:30])
+                query.bindValue(':capacity', int(capacity))
+                query.exec()
+
+                self.nextMenu = MenuListStudio(1)
+                self.nextMenu.show()
+                self.close()
+
+            else:
+                labelMessage.setText("[ERROR] Required input not filled")
 
         # Debug
         # print(query.lastError().text())
@@ -462,8 +490,16 @@ class MenuAddFilm(QWidget):
 
         buttonSimpan = QPushButton("Simpan", self)
         buttonSimpan.setProperty("class", "btn-success")
-        buttonSimpan.clicked.connect(lambda: self.submitAddFilm(inputNamaFilm.text(), inputDuration.text(), inputDescription.text(), inputPoster.text()))
+        buttonSimpan.clicked.connect(lambda: self.submitAddFilm(inputNamaFilm.text(), inputDuration.text(), inputDescription.text(), inputPoster.text(), labelMessage))
         buttonSimpan.move(655, 620)
+
+        empty = ""
+        for i in range(100):
+            empty += " "
+        labelMessage = QLabel(empty, self)
+        labelMessage.setProperty("class", "normal")
+        labelMessage.setStyleSheet("font-weight: 600; background: #FFDE59; color: #FF0000; font-size:16px")
+        labelMessage.move(10, 695)
 
     def logout(self):
         time.sleep(1)
@@ -476,22 +512,32 @@ class MenuAddFilm(QWidget):
         self.nextMenu.show()
         self.close()
 
-    def submitAddFilm(self, title, duration, description, poster):
-        if(title and duration and description and poster):
-            query = QSqlQuery()
-            query.prepare("INSERT INTO film (Title, Duration, Description, Poster) VALUES (:title, :duration, :description, :poster)")
-            query.bindValue(':title', title[:40])
-            query.bindValue(':duration', int(duration))
-            query.bindValue(':description', description)
-            query.bindValue(':poster', poster)
-            query.exec()
+    def submitAddFilm(self, title, duration, description, poster, labelMessage):
 
-            self.nextMenu = MenuListFilm(1)
-            self.nextMenu.show()
-            self.close()
+        query = QSqlQuery()
+        query.prepare("SELECT * FROM film where Title LIKE :title")
+        query.bindValue(':title', title[:40])
+        query.exec()
+
+        if query.first():
+            labelMessage.setText("[ERROR] Movie with this title already exist")
 
         else:
-            print("Error required input not filled")
+            if(title and duration and description and poster):
+                query = QSqlQuery()
+                query.prepare("INSERT INTO film (Title, Duration, Description, Poster) VALUES (:title, :duration, :description, :poster)")
+                query.bindValue(':title', title[:40])
+                query.bindValue(':duration', int(duration))
+                query.bindValue(':description', description)
+                query.bindValue(':poster', poster)
+                query.exec()
+
+                self.nextMenu = MenuListFilm(1)
+                self.nextMenu.show()
+                self.close()
+
+            else:
+                labelMessage.setText("[ERROR] Required input not filled")
 
 class MenuAddSchedule(QWidget):
     def __init__(self, filmId):
@@ -646,8 +692,16 @@ class MenuAddSchedule(QWidget):
 
         buttonSimpan = QPushButton("Simpan", self)
         buttonSimpan.setProperty("class", "btn-success")
-        buttonSimpan.clicked.connect(lambda: self.submitAddSchedule(inputStudioId.text(), inputNamaFilm.text(), inputStartTimeHour.text(), inputStartTimeMinute.text(), inputEndTimeHour.text(), inputEndTimeMinute.text(), inputTanggal.text()))
+        buttonSimpan.clicked.connect(lambda: self.submitAddSchedule(inputStudioId.text(), inputNamaFilm.text(), inputStartTimeHour.text(), inputStartTimeMinute.text(), inputEndTimeHour.text(), inputEndTimeMinute.text(), inputTanggal.text(), labelMessage))
         buttonSimpan.move(675, 620)
+
+        empty = ""
+        for i in range(100):
+            empty += " "
+        labelMessage = QLabel(empty, self)
+        labelMessage.setProperty("class", "normal")
+        labelMessage.setStyleSheet("font-weight: 600; background: #FFDE59; color: #FF0000; font-size:16px")
+        labelMessage.move(10, 695)
 
     def logout(self):
         time.sleep(1)
@@ -669,7 +723,7 @@ class MenuAddSchedule(QWidget):
         endHour.setText(str(end.time())[:2])
         endMinute.setText(str(end.time())[3:5])
 
-    def submitAddSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute, date):
+    def submitAddSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute, date, labelMessage):
 
         query = QSqlQuery()
         query.prepare("SELECT * FROM screening WHERE studioId = :id AND Date LIKE :date")
@@ -689,7 +743,7 @@ class MenuAddSchedule(QWidget):
         query.finish()
 
         if len(listStartTime) > 4:
-            print("This Studio has reached max screening for this date")
+            labelMessage.setText("[ERROR] This Studio has reached max screening for this date")
 
         else:
             badSchedule = False
@@ -713,9 +767,9 @@ class MenuAddSchedule(QWidget):
                     self.close()
 
                 else:
-                    print("Error required input not filled")
+                    labelMessage.setText("[ERROR] Required input not filled")
             else:
-                print('This Schedule clashes with existing schedule for this studio')
+                labelMessage.setText('[ERROR] This Schedule clashes with existing schedule for this studio')
 
 class MenuEditStudio(QWidget):
     def __init__(self, studioId):
@@ -799,7 +853,6 @@ class MenuEditStudio(QWidget):
         inputKapasitasStudio.setText(studioCapacity)
         inputKapasitasStudio.move(350, 340)
 
-
         buttonBatal = QPushButton("Batal", self)
         buttonBatal.setProperty("class", "btn-danger")
         buttonBatal.clicked.connect(lambda: self.returnToListStudio())
@@ -807,10 +860,16 @@ class MenuEditStudio(QWidget):
 
         buttonSimpan = QPushButton("Simpan", self)
         buttonSimpan.setProperty("class", "btn-success")
-        buttonSimpan.clicked.connect(lambda: self.submitEditStudio(inputNamaStudio.text(), inputKapasitasStudio.text(), studioId))
+        buttonSimpan.clicked.connect(lambda: self.submitEditStudio(inputNamaStudio.text(), inputKapasitasStudio.text(), studioId, labelMessage))
         buttonSimpan.move(655, 620)
 
-
+        empty = ""
+        for i in range(100):
+            empty += " "
+        labelMessage = QLabel(empty, self)
+        labelMessage.setProperty("class", "normal")
+        labelMessage.setStyleSheet("font-weight: 600; background: #FFDE59; color: #FF0000; font-size:16px")
+        labelMessage.move(10, 695)
 
     def logout(self):
         time.sleep(1)
@@ -823,7 +882,7 @@ class MenuEditStudio(QWidget):
         self.nextMenu.show()
         self.close()
 
-    def submitEditStudio(self, name, capacity, studioId):
+    def submitEditStudio(self, name, capacity, studioId, labelMessage):
         if (name and capacity):
             query = QSqlQuery()
             query.prepare("UPDATE studio SET Name = :name, Capacity = :capacity WHERE StudioID = :id")
@@ -837,7 +896,7 @@ class MenuEditStudio(QWidget):
             self.close()
 
         else:
-            print("Error required input not filled")
+            labelMessage.setText("[ERROR] Required input not filled")
 
 class MenuEditFilm(QWidget):
     def __init__(self, filmId):
@@ -957,8 +1016,16 @@ class MenuEditFilm(QWidget):
 
         buttonSimpan = QPushButton("Simpan", self)
         buttonSimpan.setProperty("class", "btn-success")
-        buttonSimpan.clicked.connect(lambda: self.submitAddFilm(inputNamaFilm.text(), inputDuration.text(), inputDescription.text(), inputPoster.text(), filmId))
+        buttonSimpan.clicked.connect(lambda: self.submitAddFilm(inputNamaFilm.text(), inputDuration.text(), inputDescription.text(), inputPoster.text(), filmId, labelMessage))
         buttonSimpan.move(655, 620)
+
+        empty = ""
+        for i in range(100):
+            empty += " "
+        labelMessage = QLabel(empty, self)
+        labelMessage.setProperty("class", "normal")
+        labelMessage.setStyleSheet("font-weight: 600; background: #FFDE59; color: #FF0000; font-size:16px")
+        labelMessage.move(10, 695)
 
     def logout(self):
         time.sleep(1)
@@ -971,7 +1038,7 @@ class MenuEditFilm(QWidget):
         self.nextMenu.show()
         self.close()
 
-    def submitAddFilm(self, title, duration, description, poster, filmId):
+    def submitAddFilm(self, title, duration, description, poster, filmId, labelMessage):
         if(title and duration and description and poster):
             query = QSqlQuery()
             query.prepare("UPDATE film SET Title = :title, Duration = :duration, Description = :description,  Poster = :poster WHERE FilmID = :filmid")
@@ -987,7 +1054,7 @@ class MenuEditFilm(QWidget):
             self.close()
 
         else:
-            print("Error required input not filled")
+            labelMessage.setText("[ERROR] Required input not filled")
 
 class MenuEditSchedule(QWidget):
     def __init__(self, scheduleId):
