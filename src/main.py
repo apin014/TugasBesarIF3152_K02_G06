@@ -743,7 +743,7 @@ class MenuAddSchedule(QWidget):
         query.finish()
 
         if len(listStartTime) > 4:
-            labelMessage.setText("[ERROR] This Studio has reached max screening for this date")
+            labelMessage.setText("[ERROR] Studio reached max screening for this date")
 
         else:
             badSchedule = False
@@ -769,7 +769,7 @@ class MenuAddSchedule(QWidget):
                 else:
                     labelMessage.setText("[ERROR] Required input not filled")
             else:
-                labelMessage.setText('[ERROR] This Schedule clashes with existing schedule for this studio')
+                labelMessage.setText('[ERROR] Schedule clashes with existing schedule')
 
 class MenuEditStudio(QWidget):
     def __init__(self, studioId):
@@ -1227,8 +1227,16 @@ class MenuEditSchedule(QWidget):
 
         buttonSimpan = QPushButton("Simpan", self)
         buttonSimpan.setProperty("class", "btn-success")
-        buttonSimpan.clicked.connect(lambda: self.submitAddSchedule(inputStudioId.text(), inputNamaFilm.text(), inputStartTimeHour.text(), inputStartTimeMinute.text(), inputEndTimeHour.text(), inputEndTimeMinute.text(), inputTanggal.text(), scheduleId))
+        buttonSimpan.clicked.connect(lambda: self.submitAddSchedule(inputStudioId.text(), inputNamaFilm.text(), inputStartTimeHour.text(), inputStartTimeMinute.text(), inputEndTimeHour.text(), inputEndTimeMinute.text(), inputTanggal.text(), scheduleId, labelMessage))
         buttonSimpan.move(675, 620)
+
+        empty = ""
+        for i in range(100):
+            empty += " "
+        labelMessage = QLabel(empty, self)
+        labelMessage.setProperty("class", "normal")
+        labelMessage.setStyleSheet("font-weight: 600; background: #FFDE59; color: #FF0000; font-size:16px")
+        labelMessage.move(10, 695)
 
     def logout(self):
         time.sleep(1)
@@ -1248,7 +1256,7 @@ class MenuEditSchedule(QWidget):
         endHour.setText(str(end.time())[:2])
         endMinute.setText(str(end.time())[3:5])
 
-    def submitAddSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute, date, scheduleId):
+    def submitAddSchedule(self, studioId, filmTitle, startHour, startMinute, endHour, endMinute, date, scheduleId, labelMessage):
 
         query = QSqlQuery()
         query.prepare("SELECT * FROM screening WHERE studioId = :id AND Date LIKE :date")
@@ -1268,7 +1276,7 @@ class MenuEditSchedule(QWidget):
         query.finish()
 
         if len(listStartTime) > 4:
-            print("This Studio has reached max screening for this date")
+            labelMessage.setText("[ERROR] Studio reached max screening for this date")
 
         else:
             badSchedule = False
@@ -1297,9 +1305,9 @@ class MenuEditSchedule(QWidget):
                     self.close()
 
                 else:
-                    print("Error required input not filled")
+                    labelMessage.setText("[ERROR] Required input not filled")
             else:
-                print('This Schedule clashes with existing schedule for this studio')
+                labelMessage.setText('[ERROR] Schedule clashes with existing schedule')
 
 class MenuListStudio(QWidget):
     def __init__(self, page):
