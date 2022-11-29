@@ -481,7 +481,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 			gridLayout = QtWidgets.QGridLayout(orderFrame)
 			gridLayout.setObjectName("gridLayout_7")
 			judulFilm = QtWidgets.QLabel(orderFrame)
-			judulFilm.setMaximumSize(QtCore.QSize(753, 16777215))
+			judulFilm.setMaximumSize(QtCore.QSize(16777215, 16777215))
 			judulFilm.setStyleSheet("QLabel {\n"
 			"            width: 89px;\n"
 			"            height: 18px;\n"
@@ -498,9 +498,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 			judulFilm.setScaledContents(True)
 			judulFilm.setWordWrap(True)
 			judulFilm.setObjectName("judulFilmOrderPage")
-			gridLayout.addWidget(judulFilm, 0, 0, 1, 1)
+			gridLayout.addWidget(judulFilm, 0, 0, 1, 2)
 			jadwal1 = QtWidgets.QPushButton(orderFrame)
-			jadwal1.setMinimumSize(QtCore.QSize(150, 80))
+			jadwal1.setMinimumSize(QtCore.QSize(198, 80))
+			jadwal1.setMaximumSize(QtCore.QSize(198, 80))
 			jadwal1.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
 			jadwal1.setStyleSheet("QPushButton {\n"
 			"            font-family: \'Inter\';\n"
@@ -520,7 +521,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 			jadwal1.setObjectName("jadwal1"+ "-" + str(row.get("ScreeningID")))
 			gridLayout.addWidget(jadwal1, 1, 0, 1, 1)
 			jadwal2 = QtWidgets.QPushButton(orderFrame)
-			jadwal2.setMinimumSize(QtCore.QSize(150, 80))
+			jadwal2.setMinimumSize(QtCore.QSize(197, 80))
+			jadwal2.setMaximumSize(QtCore.QSize(197, 80))
 			jadwal2.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
 			jadwal2.setStyleSheet("QPushButton {\n"
 			"            font-family: \'Inter\';\n"
@@ -540,7 +542,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 			jadwal2.setObjectName("jadwal2"+ "-" + str(row.get("ScreeningID")))
 			gridLayout.addWidget(jadwal2, 1, 1, 1, 1)
 			studioName = QtWidgets.QLabel(orderFrame)
-			studioName.setMaximumSize(QtCore.QSize(250, 16777215))
+			studioName.setMaximumSize(QtCore.QSize(16777215, 16777215))
+			studioName.setMinimumSize(QtCore.QSize(197, 16777215))
 			studioName.setStyleSheet("QLabel {\n"
 			"            width: 89px;\n"
 			"            height: 18px;\n"
@@ -556,9 +559,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 			"}")
 			studioName.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight|QtCore.Qt.AlignmentFlag.AlignTrailing|QtCore.Qt.AlignmentFlag.AlignVCenter)
 			studioName.setObjectName("studioOrderPage")
-			gridLayout.addWidget(studioName, 0, 3, 1, 1)
+			gridLayout.addWidget(studioName, 0, 4, 1, 1)
 			jadwal3 = QtWidgets.QPushButton(orderFrame)
-			jadwal3.setMinimumSize(QtCore.QSize(150, 80))
+			jadwal3.setMinimumSize(QtCore.QSize(197, 80))
+			jadwal3.setMaximumSize(QtCore.QSize(197, 80))
 			jadwal3.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
 			jadwal3.setStyleSheet("QPushButton {\n"
 			"            font-family: \'Inter\';\n"
@@ -578,7 +582,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 			jadwal3.setObjectName("jadwal3"+ "-" + str(row.get("ScreeningID")))
 			gridLayout.addWidget(jadwal3, 1, 2, 1, 1)
 			jadwal4 = QtWidgets.QPushButton(orderFrame)
-			jadwal4.setMinimumSize(QtCore.QSize(150, 80))
+			jadwal4.setMinimumSize(QtCore.QSize(197, 80))
+			jadwal4.setMaximumSize(QtCore.QSize(197, 80))
 			jadwal4.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
 			jadwal4.setStyleSheet("QPushButton {\n"
 			"            font-family: \'Inter\';\n"
@@ -597,8 +602,30 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 			"}")
 			jadwal4.setObjectName("jadwal4"+ "-" + str(row.get("ScreeningID")))
 			gridLayout.addWidget(jadwal4, 1, 3, 1, 1)
+			jadwal5 = QtWidgets.QPushButton(orderFrame)
+			jadwal5.setMinimumSize(QtCore.QSize(197, 80))
+			jadwal5.setMaximumSize(QtCore.QSize(197, 80))
+			jadwal5.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+			jadwal5.setStyleSheet("QPushButton {\n"
+			"            font-family: \'Inter\';\n"
+			"            font-style: normal;\n"
+			"            font-weight: 700;\n"
+			"            font-size: 20px;\n"
+			"            line-height: 87.69%;\n"
+			"\n"
+			"            color: #FFFFFF;\n"
+			"            background: #3084D1;\n"
+			"            border-radius: 20px;\n"
+			"        }\n"
+			"\n"
+			"QPushButton:pressed {\n"
+			"    background: #0445A9\n"
+			"}")
+			jadwal5.setObjectName("jadwal5"+ "-" + str(row.get("ScreeningID")))
+			gridLayout.addWidget(jadwal5, 1, 4, 1, 1)
 			tanggalPenayangan = QtWidgets.QLabel(orderFrame)
 			tanggalPenayangan.setMaximumSize(QtCore.QSize(16777215, 16777215))
+			tanggalPenayangan.setMinimumSize(QtCore.QSize(197, 16777215))
 			tanggalPenayangan.setStyleSheet("QLabel {\n"
 			"            width: 89px;\n"
 			"            height: 18px;\n"
@@ -615,7 +642,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 			tanggalPenayangan.setScaledContents(True)
 			tanggalPenayangan.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 			tanggalPenayangan.setObjectName("tanggalPenayangan")
-			gridLayout.addWidget(tanggalPenayangan, 0, 1, 1, 2)
+			gridLayout.addWidget(tanggalPenayangan, 0, 2, 1, 1)
 
 			judulFilm.setText(row.get("FilmTitle"))
 			studioName.setText(row.get("Name"))
@@ -624,7 +651,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 			jadwal1.setText(row.get("StartTime") + " - " + row.get("EndTime"))
 			jadwal1.clicked.connect(partial(self.selectSeat, row.get("ScreeningID")))
    
-			j = (jadwal2, jadwal3, jadwal4)
+			j = (jadwal2, jadwal3, jadwal4, jadwal5)
 
 			for i in range(len(data)):
 				if data[i].get("ScreeningID") == row.get("ScreeningID"):
@@ -641,7 +668,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 			for jadwal in j:
 				if len(jadwal.text()) == 0:	
 					gridLayout.removeWidget(jadwal)
- 
+			for i in range(5):
+				gridLayout.setColumnMinimumWidth(i, 197)
+
 			verticalLayout_5.addWidget(orderFrame)
 
 		self.orderScrollArea.setWidget(orderScrollAreaWidgetContents_6)
