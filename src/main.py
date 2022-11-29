@@ -689,7 +689,7 @@ class MenuAddSchedule(QWidget):
 
 
 
-        if len(listStartTime) > 4:
+        if len(listStartTime) > 5:
             print("This Studio has reached max screening for this date")
 
         else:
