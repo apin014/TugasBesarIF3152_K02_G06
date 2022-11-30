@@ -2,7 +2,7 @@
 Tugas besar RPL STI Kelompok 6 Kelas 02 1-2022/2023
 
 Penjelasan:
-CineManage adalah sebuah aplikasi yang digunakan untuk mengelola berbagai kebutuhan pada cinema atau bioskop.
+CineManage adalah sebuah aplikasi yang digunakan untuk mengelola berbagai kebutuhan yang ada pada cinema atau bioskop.
 
 Cara menjalankan:
 
