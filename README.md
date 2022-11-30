@@ -1,5 +1,13 @@
 # TugasBesarIF3152_K02_G06
 Tugas besar RPL STI Kelompok K02-G06 1-2022/2023
+Nama Anggota:
+18220034 Muhammad Zhafran Haris
+18220046 Muhammad Davin Dzimar
+18220078 Yosafat Raditya
+18220080 Vito Christian Samudra
+18220088 Ahmad Wafika Samsea
+18220100 Hughie Raymonelika Manggala
+
 
 ## Penjelasan Umum:
 Cinemanage adalah sebuah P/L desktop yang berfungsi sebagai media pencatatan dan pemesanan tiket bioskop oleh kasir. Perangkat lunak Cinemanage dikembangkan dengan tujuan untuk:
