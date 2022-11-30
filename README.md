@@ -12,7 +12,8 @@ Cinemanage adalah sebuah P/L desktop yang berfungsi sebagai media pencatatan dan
 ## Daftar modul:
 
 ## Daftar tabel basis data:
-## Basis data: cineManage.db
+## Basis data:
+cineManage.db
 
 | Film:       |
 | ----------- |
