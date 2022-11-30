@@ -2729,12 +2729,20 @@ class LoginWindow(QWidget):
         inputPass.setPlaceholderText("Input Password")
         inputPass.setEchoMode(QLineEdit.EchoMode.Password)
         inputPass.move(890, 360)
-        inputPass.returnPressed.connect(lambda: self.checkCredential(inputPass.text()))
+        inputPass.returnPressed.connect(lambda: self.checkCredential(inputPass.text(), labelMessage))
 
         buttonLogin = QPushButton("Login", self)
         buttonLogin.setProperty("class", "button")
-        buttonLogin.clicked.connect(lambda: self.checkCredential(inputPass.text()))
+        buttonLogin.clicked.connect(lambda: self.checkCredential(inputPass.text(), labelMessage))
         buttonLogin.move(980, 420)
+
+        empty = ""
+        for i in range(100):
+            empty += " "
+        labelMessage = QLabel(empty, self)
+        labelMessage.setProperty("class", "normal")
+        labelMessage.setStyleSheet("font-weight: 600; background: #FFDE59; color: #FF0000; font-size:16px")
+        labelMessage.move(10, 695)
 
         self.connectToDB()
 
@@ -2747,7 +2755,7 @@ class LoginWindow(QWidget):
         else:
             print("CONNECTED TO DB SUCCESSFULLY")
 
-    def checkCredential(self, password):
+    def checkCredential(self, password, labelMessage):
         query = QSqlQuery()
         query.prepare('SELECT * FROM user WHERE password=:pass')
         query.bindValue(':pass', password)
@@ -2769,7 +2777,7 @@ class LoginWindow(QWidget):
                     print('LOGIN SUCCESS')
                     query.finish()
         else:
-            print("PASSWORD NOT FOUND")
+            labelMessage.setText("[ERROR] Incorrect Password")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
