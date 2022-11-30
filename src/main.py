@@ -257,7 +257,7 @@ class MenuSetPassword(QWidget):
                 query.bindValue(':role', role)
                 query.exec()
                 query.finish()
-                self.nextMenu = MainMenuAdmin()
+                self.nextMenu = LoginWindow()
                 self.nextMenu.show()
                 self.close()
             else:
