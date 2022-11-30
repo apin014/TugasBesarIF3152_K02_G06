@@ -11,6 +11,18 @@ from datetime import datetime
 from PyQt6 import QtCore, QtGui, QtWidgets, QtSql
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
+if len(sys.argv) <= 1:
+    db = "cineManage.db"
+
+else:
+    if sys.argv[1][-3:] == ".db":
+        db = sys.argv[1]
+    else:
+        db = "cineManage.db"
+        
+db_path = os.path.join(current_dir, db)
+if not os.path.isfile(db_path):
+    sys.exit("The specified database file does not exist")
 
 class CineManageModel(object):
 	def __init__(self, dbPath, *args, **kwargs):
@@ -82,7 +94,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 		icon = QtGui.QIcon()
 		icon.addPixmap(QtGui.QPixmap("../img/cinemanage.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
 		self.setWindowIcon(icon)
-		self.model = CineManageModel(os.path.join(current_dir, "cineManage_V3.db"))
+		self.model = CineManageModel(db_path)
 		self.centralwidget = QtWidgets.QWidget(self)
 		self.centralwidget.setMinimumSize(QtCore.QSize(1280, 720))
 		self.centralwidget.setMaximumSize(QtCore.QSize(1280, 720))
@@ -353,7 +365,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 		"Now"))
 		self.screeningInfoButton.setText(_translate("self", "Screening\n"
 		"Information"))
-		self.orderHistoryButton.setText(_translate("self", "Order\n"
+		self.orderHistoryButton.setText(_translate("self", "Ticket Order\n"
 		"History"))
   
 	def displayScreeningInfo(self):
@@ -1559,8 +1571,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 										"            border-radius: 20px;\n"
 										"        }\n")
 			cfrmBtn.setDisabled(True)
-			
-		print(orderlist)
   
 	def completeBook(self, orderlist):
 		data = self.model.fetchBind("SELECT studioid FROM screening WHERE screeningid=:screeningID", [":screeningID"], [list(orderlist)[0][1]])
@@ -1571,7 +1581,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
   
 	def logout(self):
 		self.close()
-		os.system('python main.py')
+		os.system(f'python main.py {db}')
   
 	def setActivePageButton(self):
 		if self.stackedWidget.currentWidget() == self.orderMenu:

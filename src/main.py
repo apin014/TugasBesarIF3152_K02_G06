@@ -13,7 +13,17 @@ import math
 import datetime
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
-db_path = os.path.join(current_dir, "cineManage_V3.db")
+if len(sys.argv) <= 1:
+    db = "cineManage.db"
+
+else:
+    if sys.argv[1][-3:] == ".db":
+        db = sys.argv[1]
+    else:
+        db = "cineManage.db"
+db_path = os.path.join(current_dir, db)
+if not os.path.isfile(db_path):
+    sys.exit("The specified database file does not exist")
 
 class MainMenuAdmin(QWidget):
     def __init__(self):
@@ -2767,7 +2777,7 @@ class LoginWindow(QWidget):
                     self.close()
                     print('LOGIN SUCCESS')
                     query.finish()
-                    os.system('python MenuKasir.py')
+                    os.system(f'python MenuKasir.py {db}')
 
                 elif query.value('role') == "Admin":
                     time.sleep(1)
