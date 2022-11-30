@@ -9,7 +9,7 @@ Cinemanage adalah sebuah P/L desktop yang berfungsi sebagai media pencatatan dan
 
 ## Cara menjalankan:
 1. Login aplikasi sebagai Kasir/Admin
-2. Apabila pengguna masih baru, lakukan set password
+2. Apabila pengguna masih baru gunakan default password untuk admin (234wersdf) atau kasir (345ertdfg), lalu lakukan set password pada menu admin untuk mengubah passwordnya
 3. Sebagai Kasir, pengguna bisa memilih aksi antara memesan tiket, melihat rincian penayangan, dan riwayat pemesanan
 4. Setelah memilih pemesanan tiket, pengguna akan dihadapkan dengan tampilan film-film yang sedang tampil saat jangka waktu itu, harga, serta pilihan jam tayangnya
 5. Setelah memilih film dan jadwal yang sesuai, pengguna dapat memilih kursi yang berwarna hijau (belum dibeli)
