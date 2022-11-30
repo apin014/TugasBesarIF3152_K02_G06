@@ -1,12 +1,12 @@
 # TugasBesarIF3152_K02_G06
 Tugas besar RPL STI Kelompok K02-G06 1-2022/2023
 Nama Anggota:
-18220034 Muhammad Zhafran Haris
-18220046 Muhammad Davin Dzimar
-18220078 Yosafat Raditya
-18220080 Vito Christian Samudra
-18220088 Ahmad Wafika Samsea
-18220100 Hughie Raymonelika Manggala
+1. 18220034 Muhammad Zhafran Haris
+2. 18220046 Muhammad Davin Dzimar
+3. 18220078 Yosafat Raditya
+4. 18220080 Vito Christian Samudra
+5. 18220088 Ahmad Wafika Samsea
+6. 18220100 Hughie Raymonelika Manggala
 
 
 ## Penjelasan Umum:
