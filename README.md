@@ -1,18 +1,18 @@
-# TugasBesarIF3152_K02_G06
+## TugasBesarIF3152_K02_G06
 Tugas besar RPL STI Kelompok 6 Kelas 02 1-2022/2023
 
-Penjelasan Umum:
+# Penjelasan Umum:
 Cinemanage adalah sebuah P/L desktop yang berfungsi sebagai media pencatatan dan pemesanan tiket bioskop oleh kasir. Perangkat lunak Cinemanage dikembangkan dengan tujuan untuk:
 1. Menyediakan perangkat lunak untuk kasir dapat pemesanan tiket bioskop.
 2. Membantu pencatatan admin dengan menampilkan riwayat pembelian tiket bioskop.
 
 
-Cara menjalankan:
+# Cara menjalankan:
 
-Daftar modul:
+# Daftar modul:
 
-Daftar tabel basis data:
-Basis data: cineManage.db
+# Daftar tabel basis data:
+# Basis data: cineManage.db
 
 | Film:       |
 | ----------- |
