@@ -11,41 +11,38 @@ Daftar modul:
 Daftar tabel basis data:
 Basis data: cineManage.db
 
-Film:
-	FilmID
-	Title
-	Duration
-	Description
-	Poster
+| Film:       |
+| ----------- |
+| FilmID      |
+| Title       |
+| Duration    |
+| Description |
+| Poster      |
        
-Screening:
-	ScreeningID
-	StudioID
-	FilmTitle
-	StartTime
-	EndTime
-	Date
-  
-Seat:
-	SeatID
-	StudioID
-	ScreeningReserved
-       
-Studio:
-	StudioID
-	Name
-	Capacity
-     
-Ticket:
-	SeatID
-	StudioID
-	ScreeningID
-	OrderDatetime
-     
-User:
-	UserID
-	Password
-	Role
+| Screening:  |
+| ----------- |
+| ScreeningID |
+| StudioID    |
+| FilmTitle   |
+| StartTime   |
+| EndTime     |
+| Date        |
 
+| Studio:  |
+| ---------|
+| StudioID |
+| Name     |
+| Capacity |
 
+| Ticket: 	|
+| ------------- |
+| SeatID	|
+| StudioID	|
+| ScreeningID	|
+| OrderDatetime |
 
+| User:    |
+| ---------|
+| UserID   |
+| Password |
+| Role     |
