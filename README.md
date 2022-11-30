@@ -40,6 +40,16 @@ Setelah aplikasi berjalan:
 13. Setelah selesai melakukan kegiatan di dalam aplikasi, pengguna dapat melakukan logout
 
 ## Daftar modul:
+1. Setting password
+2. Menambah studio
+3. Menambah film
+4. Menambah jadwal penayangan
+5. Mengedit studio
+6. Mengedit film
+7. Mengedit jadwal penayangan
+8. Melihat riwayat pemesanan tiket
+9. Melakukan pemesanan tiket
+10. Melihat rincian penayangan film
 
 ## Basis data:
 cineManage.db
