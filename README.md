@@ -1,5 +1,6 @@
 # TugasBesarIF3152_K02_G06
 Tugas besar RPL STI Kelompok K02-G06 1-2022/2023
+Nama Asisten: Muhammad Azhar Faturahman
 Nama Anggota:
 1. 18220034 Muhammad Zhafran Haris
 2. 18220046 Muhammad Davin Dzimar
